@@ -1,3 +1,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/*SAFE ITEMS*/
+@layer utilities {
+  /*safe placement*/
+  .justify-safe-center {
+    justify-content: safe center;
+  }
+  .items-safe-center {
+    align-items: safe center;
+  }
+}

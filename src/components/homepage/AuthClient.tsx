@@ -3,9 +3,10 @@
 //imports
 import { useAppSelector } from "@/store/hooks";
 import BtnPage from "@/components/BtnPage";
+import { typeAuthIcons } from "@/utils/types";
 
 //client component to toggle between reflection button and login button
-export default function AuthClient() {
+export default function AuthClient({ icons }: { icons: typeAuthIcons }) {
   //ui auth (isLoggedIn)
   const { isLoggedIn } = useAppSelector((state) => state.auth);
 
@@ -13,9 +14,15 @@ export default function AuthClient() {
   return (
     <div>
       {isLoggedIn ? (
-        <BtnPage>Express Your Thoughts</BtnPage>
+        <BtnPage onClick={() => {}}>
+          {icons.on.icon}
+          {icons.on.label}
+        </BtnPage>
       ) : (
-        <BtnPage>Log In to Reflect</BtnPage>
+        <BtnPage onClick={() => {}}>
+          {icons.off.icon}
+          {icons.off.label}
+        </BtnPage>
       )}
     </div>
   );
