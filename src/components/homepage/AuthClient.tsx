@@ -4,6 +4,7 @@
 import { useAppSelector } from "@/store/hooks";
 import BtnPage from "@/components/BtnPage";
 import { typeAuthIcons } from "@/utils/types";
+import Link from "next/link";
 
 //client component to toggle between reflection button and login button
 export default function AuthClient({ icons }: { icons: typeAuthIcons }) {
@@ -15,13 +16,17 @@ export default function AuthClient({ icons }: { icons: typeAuthIcons }) {
     <div>
       {isLoggedIn ? (
         <BtnPage onClick={() => {}}>
-          {icons.on.icon}
-          {icons.on.label}
+          <Link href="/auth">
+            {icons.on.icon}
+            {icons.on.label}
+          </Link>
         </BtnPage>
       ) : (
         <BtnPage onClick={() => {}}>
-          {icons.off.icon}
-          {icons.off.label}
+          <Link href="/auth">
+            {icons.off.icon}
+            {icons.off.label}
+          </Link>
         </BtnPage>
       )}
     </div>

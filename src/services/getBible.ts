@@ -9,7 +9,7 @@ const getHeadingsFromTheReadings = (str: string) =>
 
 //get daily bible reading from evengalizo
 export async function getDailyBible() {
-  const baseApiKey = process.env.NEXT_BIBLE_API_KEY as string;
+  const baseApiKey = process.env.NEXT_EVANGELIZO_API as string;
   //date format = year/month/day
   const currDate = format(new Date(), "yyyMMdd");
   //final api to get data

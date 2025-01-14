@@ -3,7 +3,6 @@
 
 //imports
 import { getDailyBible } from "@/services/getBible";
-import { STYLES_HEADING_PRIMARY } from "@/utils/commonStyles";
 import { Divider } from "@mui/material";
 import PresentText from "../PresentText";
 
@@ -14,7 +13,9 @@ export default async function BibleReading() {
 
   return (
     <section className="flex flex-col justify-center items-center p-5 gap-4 md:bg-gray-100 mt-3 mb-5 md:w-3/5 lg:w-2/5 overflow-y-auto">
-      <h1 className={STYLES_HEADING_PRIMARY}>{dataHeading}</h1>
+      <h1 className="font-serifPrimary font-bold uppercase tracking-wider text-2xl text-stone-900 lg:text-3xl text-center">
+        {dataHeading}
+      </h1>
       <Divider flexItem variant="middle" className="bg-red-500" />
       <PresentText
         heading={dataReading1.heading}

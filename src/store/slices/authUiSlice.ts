@@ -3,17 +3,18 @@ import { createSlice } from "@reduxjs/toolkit";
 
 // Define a type for the slice state
 export interface AuthState {
-  isLoggedIn: boolean;
+  isLoggedIn: boolean; //for both signup and login
+  isLoginForm: boolean; //to decide either signup or login form should display
 }
 
 // Define the initial state using that type
 const initialState: AuthState = {
   isLoggedIn: false,
+  isLoginForm: true, //when true display login form
 };
 
 export const authSlice = createSlice({
   name: "auth",
-  // `createSlice` will infer the state type from the `initialState` argument
   initialState,
   reducers: {
     login: (state) => {
@@ -22,9 +23,12 @@ export const authSlice = createSlice({
     logout: (state) => {
       state.isLoggedIn = false;
     },
+    toggleForm: (state) => {
+      state.isLoginForm = !state.isLoginForm;
+    },
   },
 });
 
-export const { login, logout } = authSlice.actions;
+export const { login, logout, toggleForm } = authSlice.actions;
 
 export default authSlice.reducer;

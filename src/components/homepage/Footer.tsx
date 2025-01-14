@@ -20,7 +20,10 @@ export default function Footer() {
         </div>
         <div className="flex flex-col justify-center items-start gap-2 font-serifPrimary tracking-wide text-base text-stone-100">
           {/*Disclaimer*/}
-          <p>Daily bible readings are coming from the Evangelizo API</p>
+          <p>
+            Daily bible readings and the Saint of the day informations are
+            coming from the Evangelizo API.
+          </p>
           {/*SOURCE LINK*/}
           <a
             href="https://www.evangelizo.org/"
