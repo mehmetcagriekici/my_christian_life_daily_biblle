@@ -1,6 +1,7 @@
 //imports
+import { SelectChangeEvent } from "@mui/material";
 import { JSX } from "react";
-import { UseFormRegister, FieldValues } from "react-hook-form";
+import { UseFormRegister, FieldValues, Control } from "react-hook-form";
 
 //auth toggle
 export type typeAuthIcons = {
@@ -24,4 +25,9 @@ export type formInputProps = {
   register: UseFormRegister<FieldValues>;
   fieldName: string;
   isSelect?: boolean;
+  options?: string[];
+  type: string;
+  control?: Control;
+  value?: string;
+  onChange?: (e: SelectChangeEvent<string>) => void;
 };

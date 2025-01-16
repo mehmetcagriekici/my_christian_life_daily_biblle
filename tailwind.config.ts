@@ -14,10 +14,14 @@ export default {
         serifPrimary: ["Merriweather", ...defaultTheme.fontFamily.serif], // For primary serif
         serifSecondary: ["Lora", ...defaultTheme.fontFamily.serif], // For secondary serif
         ui: ["Inter", ...defaultTheme.fontFamily.sans], // Add Inter for UI
+        quotePrimary: ["Cinzel", "serif"],
+        quoteSecondary: ["EB Garamond", "serif"],
       },
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        gold: "#FFD700",
+        crimson: "#DC143C",
       },
     },
   },

@@ -28,7 +28,7 @@ export async function getDailyBible() {
   //else reading_2_or_gospel is gospel
   const [heading_reading_1, psalms, reading_2_or_gospel, gospel] = data
     .replace(/\<[^>]+>/g, "|")
-    .replace(/&[a-z]+;/gi, "")
+    .replace(/&[a-z0-9#]+;/gi, "")
     .split("|||");
 
   const [heading, reading_1] = heading_reading_1.split("||");

@@ -9,10 +9,12 @@ import LanguageIcon from "@mui/icons-material/Language";
 import LocationCityIcon from "@mui/icons-material/LocationCity";
 import ChurchIcon from "@mui/icons-material/Church";
 import BadgeIcon from "@mui/icons-material/Badge";
-import { useForm } from "react-hook-form";
+import { FieldValues, useForm } from "react-hook-form";
 import FormInput from "../FormInput";
 import { useAuth } from "@/hooks/useAuth";
-import { Divider } from "@mui/material";
+import { Divider, SelectChangeEvent } from "@mui/material";
+import SubmitBtn from "../SubmitBtn";
+import { useLocationSelect } from "@/hooks/useLocationSelect";
 
 //signup form
 export default function SignupForm() {
@@ -38,14 +40,41 @@ export default function SignupForm() {
   };
 
   //use hook form
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, reset } = useForm();
   //ui auth
   const { uiLogin } = useAuth();
+  //region, country, city selections
+  const {
+    region,
+    country,
+    regions,
+    cities,
+    countries,
+    updateCountries,
+    updateCities,
+  } = useLocationSelect();
 
   //onSubmit
-  function onSubmit() {
+  function onSubmit(formData: FieldValues) {
     //login
     uiLogin();
+
+    console.log(formData);
+
+    //reset all fields
+    reset();
+  }
+
+  //on region change
+  function onRegionChange(e: SelectChangeEvent<string>) {
+    const value = e.target.value;
+    updateCountries(value);
+  }
+
+  //on country change
+  function onCountryChange(e: SelectChangeEvent<string>) {
+    const value = e.target.value;
+    updateCities(value);
   }
 
   return (
@@ -53,59 +82,100 @@ export default function SignupForm() {
       onSubmit={handleSubmit(onSubmit)}
       className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-full w-full overflow-y-auto p-3 rounded flex flex-col justify-safe-center items-safe-center gap-5"
     >
-      <FormInput icon={icons.email} fieldName="email" register={register} />
-      <Divider flexItem variant="middle" className="bg-amber-200" />
+      <FormInput
+        icon={icons.email}
+        fieldName="email"
+        register={register}
+        type="email"
+      />
+      <Divider flexItem variant="middle" className="bg-gold" />
       <FormInput
         icon={icons.password}
         fieldName="password"
         register={register}
+        type="password"
       />
-      <Divider flexItem variant="middle" className="bg-amber-200" />
+      <Divider flexItem variant="middle" className="bg-gold" />
       <FormInput
         icon={icons.passwordConfirmation}
         fieldName="password_confirmation"
         register={register}
+        type="password"
       />
-      <Divider flexItem variant="middle" className="bg-amber-200" />
+      <Divider flexItem variant="middle" className="bg-gold" />
       <FormInput
         icon={icons.username}
         fieldName="username"
         register={register}
+        type="text"
       />
-      <Divider flexItem variant="middle" className="bg-amber-200" />
-      <FormInput icon={icons.age} fieldName="age" register={register} />
-      <Divider flexItem variant="middle" className="bg-amber-200" />
+      <Divider flexItem variant="middle" className="bg-gold" />
+      <FormInput
+        icon={icons.age}
+        fieldName="age"
+        register={register}
+        type="number"
+      />
+      <Divider flexItem variant="middle" className="bg-gold" />
       <FormInput
         icon={icons.gender}
         fieldName="gender"
         register={register}
         isSelect={true}
+        options={["male", "female"]}
+        type=""
       />
-      <Divider flexItem variant="middle" className="bg-amber-200" />
-      <FormInput icon={icons.region} fieldName="region" register={register} />
-      <Divider flexItem variant="middle" className="bg-amber-200" />
+      <Divider flexItem variant="middle" className="bg-gold" />
+      <FormInput
+        icon={icons.region}
+        fieldName="region"
+        register={register}
+        isSelect={true}
+        type=""
+        options={regions}
+        onChange={onRegionChange}
+        value={region}
+      />
+      <Divider flexItem variant="middle" className="bg-gold" />
       <FormInput
         icon={icons.country}
         fieldName="country"
         register={register}
         isSelect={true}
+        type=""
+        options={countries}
+        onChange={onCountryChange}
+        value={country}
       />
-      <Divider flexItem variant="middle" className="bg-amber-200" />
+      <Divider flexItem variant="middle" className="bg-gold" />
       <FormInput
         icon={icons.city}
         fieldName="city"
         register={register}
         isSelect={true}
+        type=""
+        options={cities}
       />
-      <Divider flexItem variant="middle" className="bg-amber-200" />
-      <FormInput icon={icons.church} fieldName="church" register={register} />
-      <Divider flexItem variant="middle" className="bg-amber-200" />
+      <Divider flexItem variant="middle" className="bg-gold" />
+      <FormInput
+        icon={icons.church}
+        fieldName="church"
+        register={register}
+        type="text"
+      />
+      <Divider flexItem variant="middle" className="bg-gold" />
       <FormInput
         icon={icons.isClergy}
         fieldName="isClergy"
         register={register}
         isSelect={true}
+        options={[
+          "No, I am not an official clergy member.",
+          "Yes, I am an official clergy member.",
+        ]}
+        type=""
       />
+      <SubmitBtn onClick={onSubmit}>Signup</SubmitBtn>
     </form>
   );
 }

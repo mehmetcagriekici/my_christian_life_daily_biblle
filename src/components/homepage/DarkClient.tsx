@@ -13,7 +13,7 @@ export default function DarkClient() {
 
   //if logged in, can reflect else must log in to reflect
   return (
-    <div>
+    <li>
       {isDarkMode ? (
         <BtnPage onClick={() => {}}>
           <LightModeIcon />
@@ -25,6 +25,6 @@ export default function DarkClient() {
           Dark Mode
         </BtnPage>
       )}
-    </div>
+    </li>
   );
 }

@@ -11,8 +11,9 @@ export default function BtnPage({
 }) {
   return (
     <button
-      className="flex flex-col justify-center items-center font-ui text-stone-800 font-bold capitalize"
+      className="flex flex-col justify-center items-center font-ui text-sky-800 font-bold capitalize hover:text-stone-800 hover:cursor-pointer hover:underline"
       onClick={onClick}
+      type="button"
     >
       {children}
     </button>

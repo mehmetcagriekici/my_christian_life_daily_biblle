@@ -14,6 +14,9 @@ import "@fontsource/lora/700.css";
 import "@fontsource/inter/400.css";
 import "@fontsource/inter/500.css";
 import "@fontsource/inter/700.css";
+import "@fontsource/cinzel/700.css"; // Bold for headings
+import "@fontsource/eb-garamond/400.css"; // Regular for body
+import "@fontsource/eb-garamond/700.css"; // Bold for body
 
 export default function RootLayout({
   children,
