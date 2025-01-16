@@ -9,6 +9,7 @@ import LanguageIcon from "@mui/icons-material/Language";
 import LocationCityIcon from "@mui/icons-material/LocationCity";
 import ChurchIcon from "@mui/icons-material/Church";
 import BadgeIcon from "@mui/icons-material/Badge";
+import PublicIcon from "@mui/icons-material/Public";
 import { FieldValues, useForm } from "react-hook-form";
 import FormInput from "../FormInput";
 import { useAuth } from "@/hooks/useAuth";
@@ -32,7 +33,8 @@ export default function SignupForm() {
     username: { emoji: <PersonIcon />, label: "username" },
     age: { emoji: <CalendarMonthIcon />, label: "age" },
     gender: { emoji: <WcIcon />, label: "gender" },
-    region: { emoji: <SouthAmericaIcon />, label: "region" },
+    region: { emoji: <PublicIcon />, label: "region" },
+    subregion: { emoji: <SouthAmericaIcon />, label: "sub region" },
     country: { emoji: <LanguageIcon />, label: "country" },
     city: { emoji: <LocationCityIcon />, label: "city" },
     church: { emoji: <ChurchIcon />, label: "church" },
@@ -46,12 +48,17 @@ export default function SignupForm() {
   //region, country, city selections
   const {
     region,
+    subRegion,
     country,
+    city,
     regions,
+    subRegions,
     cities,
     countries,
+    updateSubRegions,
     updateCountries,
     updateCities,
+    controlCity,
   } = useLocationSelect();
 
   //onSubmit
@@ -68,6 +75,12 @@ export default function SignupForm() {
   //on region change
   function onRegionChange(e: SelectChangeEvent<string>) {
     const value = e.target.value;
+    updateSubRegions(value);
+  }
+
+  //on sub region change
+  function onSubRegionChange(e: SelectChangeEvent<string>) {
+    const value = e.target.value;
     updateCountries(value);
   }
 
@@ -75,6 +88,14 @@ export default function SignupForm() {
   function onCountryChange(e: SelectChangeEvent<string>) {
     const value = e.target.value;
     updateCities(value);
+  }
+
+  //on city change
+  //nothing really happens
+  //this is just to control the field
+  function onCityChange(e: SelectChangeEvent<string>) {
+    const value = e.target.value;
+    controlCity(value);
   }
 
   return (
@@ -88,35 +109,35 @@ export default function SignupForm() {
         register={register}
         type="email"
       />
-      <Divider flexItem variant="middle" className="bg-gold" />
+      <Divider flexItem variant="middle" className="bg-gold dark:bg-white" />
       <FormInput
         icon={icons.password}
         fieldName="password"
         register={register}
         type="password"
       />
-      <Divider flexItem variant="middle" className="bg-gold" />
+      <Divider flexItem variant="middle" className="bg-gold dark:bg-white" />
       <FormInput
         icon={icons.passwordConfirmation}
         fieldName="password_confirmation"
         register={register}
         type="password"
       />
-      <Divider flexItem variant="middle" className="bg-gold" />
+      <Divider flexItem variant="middle" className="bg-gold dark:bg-white" />
       <FormInput
         icon={icons.username}
         fieldName="username"
         register={register}
         type="text"
       />
-      <Divider flexItem variant="middle" className="bg-gold" />
+      <Divider flexItem variant="middle" className="bg-gold dark:bg-white" />
       <FormInput
         icon={icons.age}
         fieldName="age"
         register={register}
         type="number"
       />
-      <Divider flexItem variant="middle" className="bg-gold" />
+      <Divider flexItem variant="middle" className="bg-gold dark:bg-white" />
       <FormInput
         icon={icons.gender}
         fieldName="gender"
@@ -125,18 +146,29 @@ export default function SignupForm() {
         options={["male", "female"]}
         type=""
       />
-      <Divider flexItem variant="middle" className="bg-gold" />
+      <Divider flexItem variant="middle" className="bg-gold dark:bg-white" />
       <FormInput
         icon={icons.region}
         fieldName="region"
         register={register}
         isSelect={true}
         type=""
+        value={region}
         options={regions}
         onChange={onRegionChange}
-        value={region}
       />
-      <Divider flexItem variant="middle" className="bg-gold" />
+      <Divider flexItem variant="middle" className="bg-gold dark:bg-white" />
+      <FormInput
+        icon={icons.subregion}
+        fieldName="sub region"
+        register={register}
+        isSelect={true}
+        type=""
+        options={subRegions}
+        onChange={onSubRegionChange}
+        value={subRegion}
+      />
+      <Divider flexItem variant="middle" className="bg-gold dark:bg-white" />
       <FormInput
         icon={icons.country}
         fieldName="country"
@@ -147,7 +179,7 @@ export default function SignupForm() {
         onChange={onCountryChange}
         value={country}
       />
-      <Divider flexItem variant="middle" className="bg-gold" />
+      <Divider flexItem variant="middle" className="bg-gold dark:bg-white" />
       <FormInput
         icon={icons.city}
         fieldName="city"
@@ -155,15 +187,17 @@ export default function SignupForm() {
         isSelect={true}
         type=""
         options={cities}
+        value={city}
+        onChange={onCityChange}
       />
-      <Divider flexItem variant="middle" className="bg-gold" />
+      <Divider flexItem variant="middle" className="bg-gold dark:bg-white" />
       <FormInput
         icon={icons.church}
         fieldName="church"
         register={register}
         type="text"
       />
-      <Divider flexItem variant="middle" className="bg-gold" />
+      <Divider flexItem variant="middle" className="bg-gold dark:bg-white" />
       <FormInput
         icon={icons.isClergy}
         fieldName="isClergy"

@@ -22,7 +22,7 @@ export default function FormInput({
 
   return (
     <section className="flex flex-col justify-center items-center gap-3 w-full select-none text-stone-800">
-      <InputLabel className="flex flex-col justify-center items-center font-ui">
+      <InputLabel className="flex flex-col justify-center items-center font-ui dark:text-gray-200">
         {icon.emoji}
         <span>{icon.label}</span>
       </InputLabel>

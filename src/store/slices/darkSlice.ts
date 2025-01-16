@@ -1,30 +1,30 @@
 //imports
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 // Define a type for the slice state
-export interface DarkSlice {
-  isDarkMode: boolean;
+export interface ThemeSlice {
+  theme: string;
 }
 
 // Define the initial state using that type
-const initialState: DarkSlice = {
-  isDarkMode: false,
+const initialState: ThemeSlice = {
+  theme: "dark",
 };
 
-export const authSlice = createSlice({
-  name: "auth",
+export const themeSlice = createSlice({
+  name: "theme",
   // `createSlice` will infer the state type from the `initialState` argument
   initialState,
   reducers: {
-    openDark: (state) => {
-      state.isDarkMode = true;
+    toggleTheme: (state) => {
+      state.theme = state.theme === "light" ? "dark" : "light";
     },
-    closeDark: (state) => {
-      state.isDarkMode = false;
+    setTheme: (state, action: PayloadAction<"light" | "dark">) => {
+      state.theme = action.payload;
     },
   },
 });
 
-export const { openDark, closeDark } = authSlice.actions;
+export const { toggleTheme, setTheme } = themeSlice.actions;
 
-export default authSlice.reducer;
+export default themeSlice.reducer;

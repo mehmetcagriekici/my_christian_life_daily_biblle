@@ -57,9 +57,9 @@ export default function LoginForm() {
         type="password"
       />
       <SubmitBtn onClick={onSubmit}>Login</SubmitBtn>
-      {/*Another Cross (God)*/}
+      {/*Another Cross (Gold)*/}
       {/*A motto*/}
-      <Divider flexItem variant="middle" className="bg-gold" />
+      <Divider flexItem variant="middle" className="bg-gold dark:bg-white" />
       <section className="w-full flex flex-col justify-center items-center gap-2 p-3">
         <h1 className="w-full font-quoteSecondary text-xl leading-none tracking-tight text-center text-crimson">
           Non nobis, Domine, non nobis, sed nomini tuo da gloriam.

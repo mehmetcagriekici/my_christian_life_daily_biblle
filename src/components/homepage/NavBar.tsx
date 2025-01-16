@@ -1,6 +1,6 @@
 //imports
 import AuthClient from "./AuthClient";
-import DarkClient from "./DarkClient";
+import ThemeToggle from "./ThemeToggle";
 import HomeIcon from "@mui/icons-material/Home";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
@@ -45,9 +45,9 @@ const navIcons = {
 export default function NavBar() {
   return (
     <nav className="fixed top-0 left-1/2 -translate-x-1/2 z-50 w-full">
-      <ul className="w-full h-full flex justify-center items-center gap-4 p-2 border-b-2 border-red-800 bg-red-50 md:gap-8">
+      <ul className="w-full h-full flex justify-center items-center gap-4 p-2 border-b-2 border-red-800 bg-red-50 md:gap-8 dark:bg-slate-900 dark:border-gold">
         {/*Dark mode toggle*/}
-        <DarkClient />
+        <ThemeToggle />
         <NavListElement href="/" icon={navIcons.home} />
         <NavListElement href="/journal" icon={navIcons.journal} />
         <NavListElement href="/profile" icon={navIcons.profile} />

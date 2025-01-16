@@ -1,31 +1,44 @@
 //get countries
 //data will be use in signup form
 
-//get region
-//get countries in that region
-//get cities in that country
-export async function getCountries(region: string) {
+//get sub region from the region
+export async function getSubRegions(region: string) {
   const base = process.env.NEXT_PUBLIC_REST_COUNTRIES;
 
-  const res = await fetch(`${base}subregion/${region}`);
+  const resRegion = await fetch(`${base}region/${region}`);
+  if (!resRegion)
+    throw new Error("Failed to fetch region from the REST countries API.");
 
-  if (!res) throw new Error("Couldn't fetch countries from the API.");
+  //only to get the subregion name
+  const dataRegion: { subregion: string }[] = await resRegion.json();
 
-  const data = (await res.json()) as { name: { common: string } }[];
-
-  const countries = data.map((country) => country.name.common);
-
-  return { countries };
+  return {
+    subregions: [...new Set(dataRegion.map((country) => country.subregion))],
+  };
 }
 
-export async function getCities(country: string) {
+//get countries in that region
+export async function getCountries(subregion: string) {
   const base = process.env.NEXT_PUBLIC_REST_COUNTRIES;
 
-  const res = await fetch(`${base}name/${country}`);
+  const resSubRegion = await fetch(`${base}subregion/${subregion}`);
+  if (!subregion)
+    throw new Error("Failed to fetch subregion from the REST countries API.");
 
-  if (!res) throw new Error("Couldn't fetch cities from the API.");
+  //only to get the country name
+  const dataSubRegion: { name: { common: string }; cca2: string }[] =
+    await resSubRegion.json();
 
-  const data = await res.json();
-
-  return { cities: data };
+  //return countries for the form
+  //and the codes for getCities
+  return {
+    countries: [
+      ...new Set(dataSubRegion.map((country) => country.name.common)),
+    ],
+    codes: Object.fromEntries([
+      ...new Set(
+        dataSubRegion.map((country) => [country.name.common, country.cca2])
+      ),
+    ]),
+  };
 }

@@ -25,7 +25,7 @@ export default function HomePage() {
 
   //app
   return (
-    <main className="h-dvh w-dvw relative overflow-hidden bg-gray-200 overflow-y-auto flex flex-col justify-safe-center items-safe-center">
+    <main className="h-dvh w-dvw relative overflow-hidden bg-gray-200 overflow-y-auto flex flex-col justify-safe-center items-safe-center dark:bg-slate-900">
       <NavBar />
       <div className="absolute top-16 flex flex-col justify-center items-center">
         {/*Reading container*/}

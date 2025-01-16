@@ -1,12 +1,12 @@
 //imports
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./slices/authUiSlice";
-import darkReducer from "./slices/darkSlice";
+import themeReducer from "./slices/darkSlice";
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
-    darkMode: darkReducer,
+    theme: themeReducer,
   },
 });
 
