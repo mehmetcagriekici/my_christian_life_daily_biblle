@@ -12,30 +12,22 @@ export default function Footer() {
       {/*API*/}
       <section className="w-full flex justify-center items-center gap-3">
         {/*LOGO*/}
-        <div className="rounded-full">
-          <Image
-            src="https://files.evangelizo.org/images/website/logo/logo_2018_118.png"
-            alt="evangelizo_icon"
-            className="rounded-full object-contain"
-            height={200}
-            width={200}
-          />
-        </div>
-        <div className="flex flex-col justify-center items-start gap-2 font-serifPrimary tracking-wide text-base text-stone-100">
-          {/*Disclaimer*/}
-          <p>
-            Daily bible readings and the Saint of the day informations are
-            coming from the Evangelizo API.
-          </p>
-          {/*SOURCE LINK*/}
-          <a
-            href="https://www.evangelizo.org/"
-            target="blank"
-            className="capitalize hover:underline text-sky-200 hover:cursor-pointer hover:text-yellow-200 active:text-red-200"
-          >
-            click here to visit evangelizo
-          </a>
-        </div>
+        <Image
+          src="https://files.evangelizo.org/images/website/logo/logo_2018_118.png"
+          alt="evangelizo_icon"
+          className="rounded-full object-contain"
+          height={100}
+          width={100}
+        />
+        {/*SOURCE LINK*/}
+        <a
+          href="https://www.evangelizo.org/"
+          target="blank"
+          className="hover:underline text-sky-200 hover:cursor-pointer hover:text-yellow-200 active:text-red-200"
+        >
+          Daily bible readings and the Saint of the day informations are coming
+          from the Evangelizo API. Click here to visit evangelizo
+        </a>
       </section>
       <Divider flexItem variant="middle" className="bg-white dark:bg-sky-600" />
       {/*USED APIS*/}
@@ -50,6 +42,26 @@ export default function Footer() {
           from the REST Countries API. Click here to visit them.
         </a>
       </section>
+      <Divider flexItem variant="middle" className="bg-white dark:bg-sky-600" />
+      {/*COUNTRY STATE CITY API*/}
+      <section className="w-full flex justify-center items-center gap-3">
+        <Image
+          src="https://countrystatecity.in/img/world.svg"
+          alt="csc api"
+          className="rounded-full object-contain"
+          height={100}
+          width={100}
+        />
+        <a
+          href="https://countrystatecity.in/"
+          target="blank"
+          className="font-serifPrimary tracking-wide text-sm text-center text-sky-200 hover:cursor-pointer hover:text-yellow-200 hover:underline active:text-red-200"
+        >
+          The cities in the signup form are coming from the Country State City
+          API.Click here to visit them
+        </a>
+      </section>
+      <Divider flexItem variant="middle" className="bg-white dark:bg-sky-600" />
     </footer>
   );
 }

@@ -31,3 +31,23 @@ export type formInputProps = {
   value?: string;
   onChange?: (e: SelectChangeEvent<string>) => void;
 };
+
+//type user
+export type typeSignupUser = {
+  email: string;
+  username: string;
+  age: number;
+  gender: string;
+  region: string;
+  sub_region: string;
+  country: string;
+  state: string;
+  city: string;
+  church: string;
+  clergy_member: string;
+};
+
+export type fullSignup = typeSignupUser & {
+  password: string;
+  passwordConfirmation: string;
+};

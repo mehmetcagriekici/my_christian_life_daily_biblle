@@ -10,17 +10,20 @@ import LocationCityIcon from "@mui/icons-material/LocationCity";
 import ChurchIcon from "@mui/icons-material/Church";
 import BadgeIcon from "@mui/icons-material/Badge";
 import PublicIcon from "@mui/icons-material/Public";
+import FlagIcon from "@mui/icons-material/Flag";
 import { FieldValues, useForm } from "react-hook-form";
 import FormInput from "../FormInput";
 import { useAuth } from "@/hooks/useAuth";
 import { Divider, SelectChangeEvent } from "@mui/material";
 import SubmitBtn from "../SubmitBtn";
 import { useLocationSelect } from "@/hooks/useLocationSelect";
+import { useState } from "react";
+import { fullSignup } from "@/utils/types";
 
 //signup form
 export default function SignupForm() {
   /*
-  email + password + password confirmation + username + age + gender + region(continent) + country + city + church + isClergy + avatar: default avar, update on edit
+  email + password + password confirmation + username + age + gender + region(continent) + country + city + church + clergy_member + avatar: default avar, update on edit
   */
 
   const icons = {
@@ -36,40 +39,65 @@ export default function SignupForm() {
     region: { emoji: <PublicIcon />, label: "region" },
     subregion: { emoji: <SouthAmericaIcon />, label: "sub region" },
     country: { emoji: <LanguageIcon />, label: "country" },
+    state: { emoji: <FlagIcon />, label: "state" },
     city: { emoji: <LocationCityIcon />, label: "city" },
     church: { emoji: <ChurchIcon />, label: "church" },
-    isClergy: { emoji: <BadgeIcon />, label: "clergy member" },
+    clergy_member: { emoji: <BadgeIcon />, label: "clergy member" },
   };
 
   //use hook form
   const { register, handleSubmit, reset } = useForm();
+
+  //other select values control
+  //gender
+  const [gender, setGender] = useState("");
+  //clergy_member
+  const [clergy_member, setclergy_member] = useState("");
+
   //ui auth
-  const { uiLogin } = useAuth();
+  const { serverSignup } = useAuth();
+
   //region, country, city selections
   const {
-    region,
-    subRegion,
-    country,
-    city,
-    regions,
-    subRegions,
-    cities,
-    countries,
+    state,
     updateSubRegions,
     updateCountries,
+    updateStates,
     updateCities,
     controlCity,
+    clear,
   } = useLocationSelect();
 
   //onSubmit
   function onSubmit(formData: FieldValues) {
-    //login
-    uiLogin();
+    //destructure form data
+    const { password, passwordConfirmation, ...user } = formData as fullSignup;
 
-    console.log(formData);
+    //submit data
+    if (password === passwordConfirmation)
+      serverSignup({ password, user: { ...user } });
+    else throw new Error("Passwords do not match!");
 
     //reset all fields
     reset();
+
+    //reset selects
+    //locations
+    clear();
+    setclergy_member("");
+    setGender("");
+  }
+
+  //on gender change
+  function onGenderChange(e: SelectChangeEvent<string>) {
+    const value = e.target.value;
+    setGender(value);
+  }
+
+  //on clergy change
+  function onClergyChange(e: SelectChangeEvent<string>) {
+    const value = e.target.value;
+    setclergy_member(value);
   }
 
   //on region change
@@ -86,6 +114,12 @@ export default function SignupForm() {
 
   //on country change
   function onCountryChange(e: SelectChangeEvent<string>) {
+    const value = e.target.value;
+    updateStates(value);
+  }
+
+  //on state change
+  function onStateChange(e: SelectChangeEvent<string>) {
     const value = e.target.value;
     updateCities(value);
   }
@@ -119,7 +153,7 @@ export default function SignupForm() {
       <Divider flexItem variant="middle" className="bg-gold dark:bg-white" />
       <FormInput
         icon={icons.passwordConfirmation}
-        fieldName="password_confirmation"
+        fieldName="passwordConfirmation"
         register={register}
         type="password"
       />
@@ -145,6 +179,8 @@ export default function SignupForm() {
         isSelect={true}
         options={["male", "female"]}
         type=""
+        value={gender}
+        onChange={onGenderChange}
       />
       <Divider flexItem variant="middle" className="bg-gold dark:bg-white" />
       <FormInput
@@ -153,43 +189,94 @@ export default function SignupForm() {
         register={register}
         isSelect={true}
         type=""
-        value={region}
-        options={regions}
+        value={state.currRegion}
+        options={state.regions}
         onChange={onRegionChange}
       />
-      <Divider flexItem variant="middle" className="bg-gold dark:bg-white" />
-      <FormInput
-        icon={icons.subregion}
-        fieldName="sub region"
-        register={register}
-        isSelect={true}
-        type=""
-        options={subRegions}
-        onChange={onSubRegionChange}
-        value={subRegion}
-      />
-      <Divider flexItem variant="middle" className="bg-gold dark:bg-white" />
-      <FormInput
-        icon={icons.country}
-        fieldName="country"
-        register={register}
-        isSelect={true}
-        type=""
-        options={countries}
-        onChange={onCountryChange}
-        value={country}
-      />
-      <Divider flexItem variant="middle" className="bg-gold dark:bg-white" />
-      <FormInput
-        icon={icons.city}
-        fieldName="city"
-        register={register}
-        isSelect={true}
-        type=""
-        options={cities}
-        value={city}
-        onChange={onCityChange}
-      />
+      {state.subRegions.length ? (
+        <>
+          <Divider
+            flexItem
+            variant="middle"
+            className="bg-gold dark:bg-white"
+          />
+          <FormInput
+            icon={icons.subregion}
+            fieldName="sub_region"
+            register={register}
+            isSelect={true}
+            type=""
+            options={state.subRegions}
+            onChange={onSubRegionChange}
+            value={state.currSubRegion}
+          />
+        </>
+      ) : (
+        ""
+      )}
+      {state.countries.length ? (
+        <>
+          <Divider
+            flexItem
+            variant="middle"
+            className="bg-gold dark:bg-white"
+          />
+          <FormInput
+            icon={icons.country}
+            fieldName="country"
+            register={register}
+            isSelect={true}
+            type=""
+            options={state.countries}
+            onChange={onCountryChange}
+            value={state.currCountry}
+          />
+        </>
+      ) : (
+        ""
+      )}
+      {state.states.length ? (
+        <>
+          <Divider
+            flexItem
+            variant="middle"
+            className="bg-gold dark:bg-white"
+          />
+          <FormInput
+            icon={icons.state}
+            fieldName="state"
+            register={register}
+            isSelect={true}
+            type=""
+            options={state.states}
+            value={state.currState}
+            onChange={onStateChange}
+          />
+        </>
+      ) : (
+        ""
+      )}
+      {state.cities.length ? (
+        <>
+          <Divider
+            flexItem
+            variant="middle"
+            className="bg-gold dark:bg-white"
+          />
+          <FormInput
+            icon={icons.city}
+            fieldName="city"
+            register={register}
+            isSelect={true}
+            type=""
+            options={state.cities}
+            value={state.currCity}
+            onChange={onCityChange}
+          />
+        </>
+      ) : (
+        ""
+      )}
       <Divider flexItem variant="middle" className="bg-gold dark:bg-white" />
       <FormInput
         icon={icons.church}
@@ -199,8 +286,8 @@ export default function SignupForm() {
       />
       <Divider flexItem variant="middle" className="bg-gold dark:bg-white" />
       <FormInput
-        icon={icons.isClergy}
-        fieldName="isClergy"
+        icon={icons.clergy_member}
+        fieldName="clergy_member"
         register={register}
         isSelect={true}
         options={[
@@ -208,8 +295,10 @@ export default function SignupForm() {
           "Yes, I am an official clergy member.",
         ]}
         type=""
+        value={clergy_member}
+        onChange={onClergyChange}
       />
-      <SubmitBtn onClick={onSubmit}>Signup</SubmitBtn>
+      <SubmitBtn>Signup</SubmitBtn>
     </form>
   );
 }

@@ -24,15 +24,15 @@ export default function LoginForm() {
 
   //use hook form
   const { register, handleSubmit, reset } = useForm();
-  //ui auth
-  const { uiLogin } = useAuth();
+
+  //auth hook
+  const { serverLogin } = useAuth();
 
   //submit
-  function onSubmit(formData: FieldValues) {
-    //login
-    uiLogin();
+  async function onSubmit(formData: FieldValues) {
+    //server login with data
 
-    console.log(formData);
+    serverLogin({ email: formData.email, password: formData.password });
 
     //reset all fields
     reset();
@@ -56,15 +56,15 @@ export default function LoginForm() {
         register={register}
         type="password"
       />
-      <SubmitBtn onClick={onSubmit}>Login</SubmitBtn>
+      <SubmitBtn>Login</SubmitBtn>
       {/*Another Cross (Gold)*/}
       {/*A motto*/}
       <Divider flexItem variant="middle" className="bg-gold dark:bg-white" />
       <section className="w-full flex flex-col justify-center items-center gap-2 p-3">
-        <h1 className="w-full font-quoteSecondary text-xl leading-none tracking-tight text-center text-crimson">
+        <h1 className="w-full font-quoteSecondary text-xl leading-none tracking-tight text-center text-crimson dark:text-gold">
           Non nobis, Domine, non nobis, sed nomini tuo da gloriam.
         </h1>
-        <p className="w-full font-quotePrimary text-xs text-center text-sky-800 tracking-wider">
+        <p className="w-full font-quotePrimary text-xs text-center text-sky-800 tracking-wider dark:text-gray-200">
           Psalm 115:1
         </p>
       </section>

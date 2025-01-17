@@ -1,106 +1,224 @@
 //imports
-import getCities from "@/services/getCities";
+import { getCities, getStates } from "@/services/getCities";
 import { getCountries, getSubRegions } from "@/services/getCountries";
-import { useState } from "react";
+import { useCallback, useMemo, useReducer } from "react";
+
+//types
+type locationState = {
+  regions: string[];
+  subRegions: string[];
+  countries: string[];
+  states: string[];
+  cities: string[];
+  currRegion: string;
+  currSubRegion: string;
+  currCountry: string;
+  currState: string;
+  currCity: string;
+  countryCodes: { [key: string]: string };
+  stateCodes: { [key: string]: string };
+};
+
+type locationAction =
+  | { type: "SET_STATE"; payload: Partial<locationState> }
+  | { type: "RESET_REGION"; payload: "" }
+  | { type: "RESET_SUB_REGION"; payload: "" }
+  | { type: "RESET_COUNTRY"; payload: "" }
+  | { type: "RESET_STATE"; payload: "" }
+  | { type: "RESET"; payload: "" };
+
+//action types
+const ACTIONS = {
+  SET_STATE: "SET_STATE",
+  //reset the states below the current state
+  RESET: "RESET",
+  RESET_REGION: "RESET_REGION",
+  RESET_SUB_REGION: "RESET_SUB_REGION",
+  RESET_COUNTRY: "RESET_COUNTRY",
+  RESET_STATE: "RESET_STATE",
+};
+
+//initial state
+const initialState: locationState = {
+  regions: ["Africa", "Americas", "Asia", "Europe", "Oceania"],
+  subRegions: [],
+  countries: [],
+  states: [],
+  cities: [],
+  currRegion: "",
+  currSubRegion: "",
+  currCountry: "",
+  currState: "",
+  currCity: "",
+  countryCodes: {},
+  stateCodes: {},
+};
+
+//reducer function
+function locationReducer(
+  state: locationState,
+  action: locationAction
+): locationState {
+  switch (action.type) {
+    case ACTIONS.SET_STATE:
+      return { ...state, ...action.payload };
+    case ACTIONS.RESET:
+      return initialState;
+    case ACTIONS.RESET_REGION:
+      return {
+        ...state,
+        subRegions: [],
+        countries: [],
+        states: [],
+        cities: [],
+        currRegion: "",
+        currSubRegion: "",
+        currCountry: "",
+        currState: "",
+        currCity: "",
+      };
+    case ACTIONS.RESET_SUB_REGION:
+      return {
+        ...state,
+        countries: [],
+        states: [],
+        cities: [],
+        currCountry: "",
+        currState: "",
+        currCity: "",
+      };
+    case ACTIONS.RESET_COUNTRY:
+      return { ...state, states: [], cities: [], currState: "", currCity: "" };
+    case ACTIONS.RESET_STATE:
+      return { ...state, cities: [], currCity: "" };
+    default:
+      throw new Error("Undefined ACtion Type on Location Select!");
+  }
+}
 
 export function useLocationSelect() {
-  //all sub regions in REST Countries
-  const regions = ["Africa", "Americas", "Asia", "Europe", "Oceania"];
+  //location state and dispatch
+  const [state, dispatch] = useReducer(locationReducer, initialState);
 
-  //region and country
-  //only to be used in the form ui
-  const [region, setRegion] = useState("");
-  const [subRegion, setSubRegion] = useState("");
-  const [country, setCountry] = useState("");
-  const [city, setCity] = useState("");
+  //function to reset all
+  function clear() {
+    dispatch({ type: "RESET", payload: "" });
+  }
 
-  //possible countries and cities
-  const [subRegions, setSubRegions] = useState<string[]>([]);
-  const [countries, setCountries] = useState<string[]>([]);
-  const [cities, setCities] = useState<string[]>([]);
-  //country codes for cities
-  const [codes, setCodes] = useState<{ [key: string]: string }>({});
+  //select regions
+  function selectRegion(currRegion: string) {
+    //reset all
+    dispatch({ type: "RESET_REGION", payload: "" });
+    //select region
+    dispatch({ type: "SET_STATE", payload: { currRegion } });
+  }
 
-  //update sub regions
-  async function updateSubRegions(regionName: string) {
-    //update field value
-    setRegion(regionName);
-    //reset fields
-    setSubRegion("");
-    setCountry("");
-    setCity("");
-
-    //reset options //////
+  //select sub region
+  function selectSubRegion(currSubRegion: string) {
     //reset sub regions
-    setSubRegions([]);
-    //reset countries
-    setCountries([]);
-    //reset cities
-    setCities([]);
-    ///////////////////
-
-    //await get sub regions
-    const { subregions } = await getSubRegions(regionName);
-    //supdate sub regions
-    setSubRegions(subregions);
+    dispatch({ type: "RESET_SUB_REGION", payload: "" });
+    //select sub region
+    dispatch({ type: "SET_STATE", payload: { currSubRegion } });
   }
 
-  //function to update the countries
-  //input region
-  async function updateCountries(subRegionName: string) {
-    //update field value
-    setSubRegion(subRegionName);
-
-    //reset field
-    setCountry("");
-    setCity("");
-
-    //reset options //////
+  //function select country
+  function selectCountry(currCountry: string) {
     //reset countries
-    setCountries([]);
-    //reset cities
-    setCities([]);
-    ///////////////////
+    dispatch({ type: "RESET_COUNTRY", payload: "" });
+    //select country
+    dispatch({ type: "SET_STATE", payload: { currCountry } });
+  }
 
-    //await get countries
-    const { countries, codes } = await getCountries(subRegionName);
+  //function to select state
+  function selectState(currState: string) {
+    //reset states
+    dispatch({ type: "RESET_STATE", payload: "" });
+    //select state
+    dispatch({ type: "SET_STATE", payload: { currState } });
+  }
+
+  //select city - control only
+  function controlCity(currCity: string) {
+    dispatch({ type: "SET_STATE", payload: { currCity } });
+  }
+
+  //update subregions with region name
+  const updateSubRegions = useCallback(async (regionName: string) => {
+    //select region
+    selectRegion(regionName); //update the form field
+    //get possible sub regions from the api
+    const { subRegions } = await getSubRegions(regionName);
+    //update sub regions
+    dispatch({ type: "SET_STATE", payload: { subRegions } });
+  }, []);
+
+  //update countries with sub region name
+  const updateCountries = useCallback(async (subRegionName: string) => {
+    //select sub region
+    selectSubRegion(subRegionName); //update the form field
+    //get possible countries from the api
+    const { countries } = await getCountries(subRegionName);
     //update countries
-    setCountries(countries);
-    //update codes
-    setCodes(codes);
-  }
+    //update country codes
+    dispatch({
+      type: "SET_STATE",
+      payload: {
+        countries: countries.map((country) => country.name),
+        countryCodes: Object.fromEntries(
+          countries.map((country) => [country.name, country.code])
+        ),
+      },
+    });
+  }, []);
 
-  //function to update the cities
-  async function updateCities(country: string) {
-    //update field value
-    setCountry(country);
+  //update states with the country code
+  const updateStates = useCallback(
+    async (countryName: string) => {
+      //select country
+      selectCountry(countryName);
+      //get all possible states from the api
+      const { states } = await getStates(state.countryCodes[countryName]);
+      //update states
+      //update state codes
+      dispatch({
+        type: "SET_STATE",
+        payload: {
+          states: states.map((state) => state.name),
+          stateCodes: Object.fromEntries(
+            states.map((state) => [state.name, state.code])
+          ),
+        },
+      });
+    },
+    [state.countryCodes]
+  );
 
-    //reset options //////
-    //reset cities
-    setCities([]);
-    ///////////////////
+  //update cities with the state and country code
+  const updateCities = useCallback(
+    async (stateName: string) => {
+      //select state
+      selectState(stateName);
+      //get all cities using the state and country codes
+      const { cities } = await getCities(
+        state.countryCodes[state.currCountry],
+        state.stateCodes[stateName]
+      );
+      //update cities
+      dispatch({ type: "SET_STATE", payload: { cities } });
+    },
+    [state.stateCodes, state.countryCodes, state.currCountry]
+  );
 
-    const { cities } = await getCities(codes[country]);
-    //update cities
-    setCities(cities);
-  }
-
-  function controlCity(cityName: string) {
-    setCity(cityName);
-  }
-
-  return {
-    region,
-    subRegion,
-    country,
-    city,
-    regions,
-    subRegions,
-    countries,
-    cities,
-    updateSubRegions,
-    updateCountries,
-    updateCities,
-    controlCity,
-  };
+  return useMemo(
+    () => ({
+      state,
+      updateSubRegions,
+      updateCountries,
+      updateStates,
+      updateCities,
+      controlCity,
+      clear,
+    }),
+    [state, updateSubRegions, updateCountries, updateStates, updateCities]
+  );
 }

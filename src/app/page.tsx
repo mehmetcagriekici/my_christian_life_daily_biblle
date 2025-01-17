@@ -3,7 +3,7 @@ import { typeAuthIcons } from "@/utils/types";
 import BibleReading from "@/components/homepage/BibleReading";
 import Footer from "@/components/homepage/Footer";
 import AuthClient from "@/components/homepage/AuthClient";
-import NavBar from "@/components/homepage/NavBar";
+import NavBar from "@/components/NavBar";
 import SaintReading from "@/components/homepage/SaintReading";
 import LoginIcon from "@mui/icons-material/Login";
 import CreateIcon from "@mui/icons-material/Create";

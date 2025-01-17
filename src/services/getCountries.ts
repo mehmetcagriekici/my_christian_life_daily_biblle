@@ -13,7 +13,7 @@ export async function getSubRegions(region: string) {
   const dataRegion: { subregion: string }[] = await resRegion.json();
 
   return {
-    subregions: [...new Set(dataRegion.map((country) => country.subregion))],
+    subRegions: [...new Set(dataRegion.map((country) => country.subregion))],
   };
 }
 
@@ -33,12 +33,12 @@ export async function getCountries(subregion: string) {
   //and the codes for getCities
   return {
     countries: [
-      ...new Set(dataSubRegion.map((country) => country.name.common)),
-    ],
-    codes: Object.fromEntries([
       ...new Set(
-        dataSubRegion.map((country) => [country.name.common, country.cca2])
+        dataSubRegion.map((country) => ({
+          name: country.name.common,
+          code: country.cca2,
+        }))
       ),
-    ]),
+    ],
   };
 }

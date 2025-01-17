@@ -13,7 +13,7 @@ export default function ThemeToggle() {
   const { theme } = useAppSelector((state) => state.theme);
 
   return (
-    <li>
+    <li className="text-nowrap">
       <BtnPage
         onClick={() => {
           dispatch(toggleTheme());
