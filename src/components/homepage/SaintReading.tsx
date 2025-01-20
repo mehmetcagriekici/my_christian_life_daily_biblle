@@ -14,7 +14,7 @@ export default async function SaintReading() {
       <h1 className="font-serifPrimary font-bold uppercase tracking-wider text-lg text-stone-900 lg:text-xl text-center dark:text-gray-200">
         saints of the day
       </h1>
-      <Divider flexItem variant="middle" className="bg-crimson dark:bg-gold" />
+      <Divider flexItem variant="middle" className="bg-crimson dark:bg-white" />
       <p className="font-sans text-sm text-sky-900 dark:text-gray-200">
         Click on the links below to read detailed information about the saints
         on Evangalizo.org

@@ -3,9 +3,9 @@ import { FieldValues, useForm } from "react-hook-form";
 import EmailIcon from "@mui/icons-material/Email";
 import PasswordIcon from "@mui/icons-material/Password";
 import FormInput from "../FormInput";
-import { useAuth } from "@/hooks/useAuth";
 import { Divider } from "@mui/material";
 import SubmitBtn from "../SubmitBtn";
+import { userLogin } from "@/services/getUser";
 
 //login form
 /*email + password*/
@@ -25,14 +25,11 @@ export default function LoginForm() {
   //use hook form
   const { register, handleSubmit, reset } = useForm();
 
-  //auth hook
-  const { serverLogin } = useAuth();
-
   //submit
   async function onSubmit(formData: FieldValues) {
+    const { email, password } = formData;
     //server login with data
-
-    serverLogin({ email: formData.email, password: formData.password });
+    await userLogin({ email, password });
 
     //reset all fields
     reset();

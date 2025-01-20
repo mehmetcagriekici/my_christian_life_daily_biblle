@@ -4,13 +4,16 @@
 import LoginForm from "./LoginForm";
 import SignupForm from "./SignupForm";
 import BtnPage from "../BtnPage";
-import { useAuth } from "@/hooks/useAuth";
 import AppRegistrationIcon from "@mui/icons-material/AppRegistration";
 import LoginIcon from "@mui/icons-material/Login";
+import { useState } from "react";
 
 export default function ClientForms() {
-  //to toggle between forms
-  const { toggleForms, isLoginForm } = useAuth();
+  const [isLoginForm, setIsLoginForm] = useState(true);
+
+  function toggleForms() {
+    setIsLoginForm((s) => !s);
+  }
 
   return (
     <div className="relative h-full w-full bg-stone-100 rounded border-2 border-gray-300 overflow-hidden dark:bg-slate-900">

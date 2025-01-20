@@ -13,12 +13,12 @@ import PublicIcon from "@mui/icons-material/Public";
 import FlagIcon from "@mui/icons-material/Flag";
 import { FieldValues, useForm } from "react-hook-form";
 import FormInput from "../FormInput";
-import { useAuth } from "@/hooks/useAuth";
 import { Divider, SelectChangeEvent } from "@mui/material";
 import SubmitBtn from "../SubmitBtn";
 import { useLocationSelect } from "@/hooks/useLocationSelect";
 import { useState } from "react";
 import { fullSignup } from "@/utils/types";
+import { userSignup } from "@/services/getUser";
 
 //signup form
 export default function SignupForm() {
@@ -54,9 +54,6 @@ export default function SignupForm() {
   //clergy_member
   const [clergy_member, setclergy_member] = useState("");
 
-  //ui auth
-  const { serverSignup } = useAuth();
-
   //region, country, city selections
   const {
     state,
@@ -69,14 +66,14 @@ export default function SignupForm() {
   } = useLocationSelect();
 
   //onSubmit
-  function onSubmit(formData: FieldValues) {
+  async function onSubmit(formData: FieldValues) {
     //destructure form data
     const { password, passwordConfirmation, ...user } = formData as fullSignup;
 
-    //submit data
-    if (password === passwordConfirmation)
-      serverSignup({ password, user: { ...user } });
-    else throw new Error("Passwords do not match!");
+    if (password !== passwordConfirmation)
+      throw new Error("Passwords do not match");
+
+    await userSignup({ user, password });
 
     //reset all fields
     reset();
