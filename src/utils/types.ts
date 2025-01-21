@@ -30,6 +30,7 @@ export type formInputProps = {
   control?: Control;
   value?: string;
   onChange?: (e: SelectChangeEvent<string>) => void;
+  readonly?: boolean;
 };
 
 //type user

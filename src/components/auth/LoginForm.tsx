@@ -6,6 +6,7 @@ import FormInput from "../FormInput";
 import { Divider } from "@mui/material";
 import SubmitBtn from "../SubmitBtn";
 import { userLogin } from "@/services/getUser";
+import DividerText from "../DividerText";
 
 //login form
 /*email + password*/
@@ -58,12 +59,10 @@ export default function LoginForm() {
       {/*A motto*/}
       <Divider flexItem variant="middle" className="bg-gold dark:bg-white" />
       <section className="w-full flex flex-col justify-center items-center gap-2 p-3">
-        <h1 className="w-full font-quoteSecondary text-xl leading-none tracking-tight text-center text-crimson dark:text-gold">
-          Non nobis, Domine, non nobis, sed nomini tuo da gloriam.
-        </h1>
-        <p className="w-full font-quotePrimary text-xs text-center text-sky-800 tracking-wider dark:text-gray-200">
-          Psalm 115:1
-        </p>
+        <DividerText
+          psalm="Psalm 115:1"
+          quote="Non nobis, Domine, non nobis, sed nomini tuo da gloriam."
+        />
       </section>
     </form>
   );

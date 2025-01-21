@@ -16,10 +16,10 @@ export default function FormInput({
   type,
   value = "",
   onChange = () => {},
+  readonly = false,
 }: formInputProps) {
   //isSelect
   //select element with options coming as props
-
   return (
     <section className="flex flex-col justify-center items-center gap-3 w-full select-none text-stone-800">
       <InputLabel className="flex flex-col justify-center items-center font-ui dark:text-gray-200">
@@ -35,6 +35,7 @@ export default function FormInput({
             value={value}
             onChange={onChange}
             label={icon.label}
+            readOnly={readonly}
           >
             {/*options come from the parent component*/}
             {options.map((option, i) => (
@@ -49,6 +50,7 @@ export default function FormInput({
           {...register(fieldName, { required: true })}
           className="w-full text-xl indent-2 p-1 rounded-sm bg-gray-300 outline-none  font-serifPrimary tracking-wide hover:text-sky-800 hover:bg-gray-200 border-2 border-gray-200 hover:border-gray-400"
           type={type}
+          readOnly={readonly}
         />
       )}
     </section>
