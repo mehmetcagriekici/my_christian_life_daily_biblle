@@ -51,6 +51,7 @@ export default function FormInput({
           className="w-full text-xl indent-2 p-1 rounded-sm bg-gray-300 outline-none  font-serifPrimary tracking-wide hover:text-sky-800 hover:bg-gray-200 border-2 border-gray-200 hover:border-gray-400"
           type={type}
           readOnly={readonly}
+          defaultValue={value}
         />
       )}
     </section>

@@ -40,12 +40,6 @@ export default async function ProfilePage() {
     avatar: <PersonIcon className="text-sky-700 dark:text-sky-100" />,
   };
 
-  //only the necessary data
-  //will be used in UserInfo and EditProfile
-  const data = Object.entries(userData).filter(
-    ([key]) => key !== "id" && key !== "created_at"
-  );
-
   return (
     <div className="h-dvh w-dvw relative bg-gray-200 flex justify-center items-center dark:bg-slate-950">
       {/*NavBar, if there is not session, the app will redirect to auth page*/}
@@ -68,7 +62,7 @@ export default async function ProfilePage() {
         />
 
         {/*display user information*/}
-        <UserInfo data={data} icons={icons} />
+        <UserInfo icons={icons} initialStateData={userData} />
 
         <Divider flexItem variant="middle" className="dark:bg-white" />
         <DividerText

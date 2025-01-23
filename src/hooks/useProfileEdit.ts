@@ -1,36 +1,29 @@
 //imports
 import { getCities, getStates } from "@/services/getCities";
 import { getCountries, getSubRegions } from "@/services/getCountries";
-import { useAppSelector } from "@/store/hooks";
 import { useCallback, useMemo, useReducer, useEffect } from "react";
 import {
+  setAvatar,
+  setChurch,
   setCities,
+  setCity,
+  setClergy,
   setCountries,
+  setCountry,
+  setRegion,
+  setState,
   setStates,
+  setSubRegion,
   setSubRegions,
-} from "@/store/slices/locationSlice";
-import { useAppDispatch } from "@/store/hooks";
+  setUsername,
+} from "@/store/slices/editSlice";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 
 //types
 type editState = {
-  email: string;
-  username: string;
-  region: string;
-  sub_region: string;
-  country: string;
-  state: string;
-  city: string;
-  church: string;
-  clergy_member: string;
   regions: string[];
-  sub_regions: string[];
-  countries: string[];
-  states: string[];
-  cities: string[];
   clergy_options: string[];
-  countryCodes: { [key: string]: string };
-  stateCodes: { [key: string]: string };
-  avatar: string;
+  openEdit: boolean;
 };
 
 type editAction =
@@ -60,10 +53,22 @@ export function useProfileEdit({
 }: {
   initialStateData: { [key: string]: string | number };
 }) {
-  //get all location options from the global state
-  const { subRegions, countries, states, cities } = useAppSelector(
-    (state) => state.location
+  const initialState: editState = useMemo(
+    () => ({
+      regions: ["Africa", "Americas", "Asia", "Europe", "Oceania"],
+      clergy_options: [
+        "No, I am not an official clergy member.",
+        "Yes, I am an official clergy member.",
+      ],
+      openEdit: false,
+    }),
+    []
   );
+
+  //edit profile form state
+  const [state, dispatch] = useReducer(editReducer, initialState);
+  //global state
+  const { states, countries } = useAppSelector((s) => s.location);
 
   //init form location options
   //init form options for locations
@@ -72,6 +77,17 @@ export function useProfileEdit({
 
   useEffect(() => {
     const fetchOptions = async () => {
+      //init data on global state
+      globalDispatch(setUsername(initialStateData.username as string));
+      globalDispatch(setRegion(initialStateData.region as string));
+      globalDispatch(setSubRegion(initialStateData.sub_region as string));
+      globalDispatch(setCountry(initialStateData.country as string));
+      globalDispatch(setState(initialStateData.state as string));
+      globalDispatch(setCity(initialStateData.city as string));
+      globalDispatch(setChurch(initialStateData.church as string));
+      globalDispatch(setAvatar(initialStateData.avatar as string));
+      globalDispatch(setClergy(initialStateData.clergy_member as string));
+
       const { subRegions } = await getSubRegions(
         initialStateData.region as string
       );
@@ -125,214 +141,131 @@ export function useProfileEdit({
     fetchOptions();
   }, [globalDispatch, initialStateData]);
 
-  //get initial state from the initial state data
-  const initialState: editState = useMemo(
-    () => ({
-      email: initialStateData.email as string,
-      username: initialStateData.username as string,
-      region: initialStateData.region as string,
-      sub_region: initialStateData.sub_region as string,
-      country: initialStateData.country as string,
-      state: initialStateData.state as string,
-      city: initialStateData.city as string,
-      church: initialStateData.church as string,
-      avatar: initialStateData.avatar as string,
-      clergy_member: initialStateData.clergy_member as string,
-      regions: ["Africa", "Americas", "Asia", "Europe", "Oceania"],
-      //if global state updated
-      sub_regions: subRegions,
-      countries: countries.countries,
-      states: states.states,
-      cities,
-      clergy_options: [
-        "No, I am not an official clergy member.",
-        "Yes, I am an official clergy member.",
-      ],
-      countryCodes: countries.countryCodes,
-      stateCodes: states.stateCodes,
-    }),
-    [initialStateData, subRegions, countries, states, cities]
-  );
+  //open edit form
+  function openEditForm() {
+    dispatch({ type: "SET_STATE", payload: { openEdit: true } });
+  }
 
-  //edit profile form state
-  const [state, dispatch] = useReducer(editReducer, initialState);
-
-  //function to clear all values
-  const clear = useCallback(() => {
-    dispatch({ type: "RESET_FIELDS", payload: initialState });
-  }, [initialState]);
-
-  //control email
-  function controlEmail(email: string) {
-    //update email
-    dispatch({ type: "SET_STATE", payload: { email } });
+  //close edit form
+  function closeEditForm() {
+    dispatch({ type: "SET_STATE", payload: { openEdit: false } });
   }
 
   //control username
-  function controlUsername(username: string) {
-    //update username
-    dispatch({ type: "SET_STATE", payload: { username } });
-  }
+  const controlUsername = useCallback(
+    (username: string) => {
+      //update username
+      globalDispatch(setUsername(username));
+    },
+    [globalDispatch]
+  );
 
   //control church
-  function controlChurch(church: string) {
-    dispatch({ type: "SET_STATE", payload: { church } });
-  }
+  const controlChurch = useCallback(
+    (church: string) => {
+      globalDispatch(setChurch(church));
+    },
+    [globalDispatch]
+  );
 
   //control clergy_member
-  function controlClergyMember(clergy_member: string) {
-    dispatch({ type: "SET_STATE", payload: { clergy_member } });
-  }
+  const controlClergyMember = useCallback(
+    (clergy_member: string) => {
+      globalDispatch(setClergy(clergy_member));
+    },
+    [globalDispatch]
+  );
 
   //control avatar (src)
-  function controlAvatar(avatar: string) {
-    dispatch({ type: "SET_STATE", payload: { avatar } });
-  }
+  const controlAvatar = useCallback(
+    (avatar: string) => {
+      globalDispatch(setAvatar(avatar));
+    },
+    [globalDispatch]
+  );
 
   //LOCATIONS //////////////////////////////////////////
-  //function to select region
-  function selectRegion(region: string) {
-    //reset all location fields
-    dispatch({
-      type: "RESET_FIELDS",
-      payload: {
-        sub_regions: [],
-        countries: [],
-        states: [],
-        cities: [],
-        region: "",
-        sub_region: "",
-        country: "",
-        state: "",
-        city: "",
-      },
-    });
-
-    //update region
-    dispatch({ type: "SET_STATE", payload: { region } });
-  }
-
-  //function to select sub region
-  function selectSubRegion(sub_region: string) {
-    //reset location fields under the sub region
-    dispatch({
-      type: "RESET_FIELDS",
-      payload: {
-        countries: [],
-        states: [],
-        cities: [],
-        country: "",
-        state: "",
-        city: "",
-      },
-    });
-
-    //update sub region
-    dispatch({ type: "SET_STATE", payload: { sub_region } });
-  }
-
-  //function to select country
-  function selectCountry(country: string) {
-    //reset location fields under the countries
-    dispatch({
-      type: "RESET_FIELDS",
-      payload: {
-        states: [],
-        cities: [],
-        state: "",
-        city: "",
-      },
-    });
-
-    //update country
-    dispatch({ type: "SET_STATE", payload: { country } });
-  }
-
-  //function to select state
-  function selectState(state: string) {
-    //reset location fields below states
-    dispatch({
-      type: "RESET_FIELDS",
-      payload: {
-        cities: [],
-        city: "",
-      },
-    });
-
-    //update state
-    dispatch({ type: "SET_STATE", payload: { state } });
-  }
 
   //control city
-  function controlCity(city: string) {
-    //update the city
-    dispatch({ type: "SET_STATE", payload: { city } });
-  }
+  const controlCity = useCallback(
+    (city: string) => {
+      //update the city
+      globalDispatch(setCity(city));
+    },
+    [globalDispatch]
+  );
 
   //update subregions with region name
-  const updateSubRegions = useCallback(async (regionName: string) => {
-    //select region
-    selectRegion(regionName); //update the form field
-    //get possible sub regions from the api
-    const { subRegions } = await getSubRegions(regionName);
-    //update sub regions
-    dispatch({ type: "SET_STATE", payload: { sub_regions: subRegions } });
-  }, []);
+  const updateSubRegions = useCallback(
+    async (regionName: string) => {
+      //select region
+      globalDispatch(setRegion(regionName));
+      //get possible sub regions from the api
+      const { subRegions } = await getSubRegions(regionName);
+      globalDispatch(setSubRegions(subRegions));
+    },
+    [globalDispatch]
+  );
 
   //update countries with sub region name
-  const updateCountries = useCallback(async (subRegionName: string) => {
-    //select sub region
-    selectSubRegion(subRegionName); //update the form field
-    //get possible countries from the api
-    const { countries } = await getCountries(subRegionName);
-    //update countries
-    //update country codes
-    dispatch({
-      type: "SET_STATE",
-      payload: {
-        countries: countries.map((country) => country.name),
-        countryCodes: Object.fromEntries(
-          countries.map((country) => [country.name, country.code])
-        ),
-      },
-    });
-  }, []);
+  const updateCountries = useCallback(
+    async (subRegionName: string) => {
+      //select sub region
+      //update the form field
+      globalDispatch(setSubRegion(subRegionName));
+      //get possible countries from the api
+      const { countries } = await getCountries(subRegionName);
+      globalDispatch(
+        setCountries({
+          countries: countries.map((country) => country.name),
+          countryCodes: Object.fromEntries(
+            countries.map((country) => [country.name, country.code])
+          ),
+        })
+      );
+    },
+    [globalDispatch]
+  );
 
   //update states with the country code
   const updateStates = useCallback(
     async (countryName: string) => {
       //select country
-      selectCountry(countryName);
+      globalDispatch(setCountry(countryName));
       //get all possible states from the api
-      const { states } = await getStates(state.countryCodes[countryName]);
+      const { states } = await getStates(countries.countryCodes[countryName]);
       //update states
       //update state codes
-      dispatch({
-        type: "SET_STATE",
-        payload: {
+      globalDispatch(
+        setStates({
           states: states.map((state) => state.name),
           stateCodes: Object.fromEntries(
             states.map((state) => [state.name, state.code])
           ),
-        },
-      });
+        })
+      );
     },
-    [state.countryCodes]
+    [countries.countryCodes, globalDispatch]
   );
   //update cities with the state and country code
   const updateCities = useCallback(
     async (stateName: string) => {
       //select state
-      selectState(stateName);
+      globalDispatch(setState(stateName));
       //get all cities using the state and country codes
       const { cities } = await getCities(
-        state.countryCodes[state.country],
-        state.stateCodes[stateName]
+        countries.countryCodes[initialStateData.country],
+        states.stateCodes[stateName]
       );
       //update cities
-      dispatch({ type: "SET_STATE", payload: { cities } });
+      globalDispatch(setCities(cities));
     },
-    [state.stateCodes, state.countryCodes, state.country]
+    [
+      countries.countryCodes,
+      states.stateCodes,
+      globalDispatch,
+      initialStateData,
+    ]
   );
 
   return useMemo(
@@ -343,12 +276,12 @@ export function useProfileEdit({
       updateStates,
       updateCities,
       controlCity,
-      clear,
       controlAvatar,
-      controlEmail,
       controlChurch,
       controlClergyMember,
       controlUsername,
+      openEditForm,
+      closeEditForm,
     }),
     [
       state,
@@ -356,7 +289,11 @@ export function useProfileEdit({
       updateCountries,
       updateStates,
       updateCities,
-      clear,
+      controlAvatar,
+      controlChurch,
+      controlClergyMember,
+      controlUsername,
+      controlCity,
     ]
   );
 }

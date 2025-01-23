@@ -111,3 +111,35 @@ export async function userSignup({
   revalidatePath("/", "layout");
   redirect("/");
 }
+
+//update user auth
+export async function updateUser({
+  data,
+}: {
+  data: { [key: string]: string };
+}) {
+  const supabase = await createClient();
+
+  //update user in auth
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.updateUser({
+    data,
+  });
+
+  if (error) throw new Error(error.message);
+
+  //update users table
+
+  if (!user)
+    throw new Error("An error occured while updating the user profile.");
+
+  const { error: tableError } = await supabase
+    .from("users")
+    .update(data)
+    .eq("id", user.id)
+    .select();
+
+  if (tableError) throw new Error(tableError.message);
+}

@@ -62,6 +62,16 @@ export default function Footer() {
         </a>
       </section>
       <Divider flexItem variant="middle" className="bg-white dark:bg-sky-600" />
+      <section className="w-full flex justify-center items-center gap-3">
+        <a
+          href="https://openai.com/"
+          target="blank"
+          className="font-serifPrimary tracking-wide text-sm text-center text-sky-200 hover:cursor-pointer hover:text-yellow-200 hover:underline active:text-red-200"
+        >
+          Rosary data (both Latin and English) provided with assistance from
+          ChatGPT by OpenAI.
+        </a>
+      </section>
     </footer>
   );
 }

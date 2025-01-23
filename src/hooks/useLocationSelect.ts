@@ -1,13 +1,6 @@
 //imports
 import { getCities, getStates } from "@/services/getCities";
 import { getCountries, getSubRegions } from "@/services/getCountries";
-import { useAppDispatch } from "@/store/hooks";
-import {
-  setCities,
-  setCountries,
-  setStates,
-  setSubRegions,
-} from "@/store/slices/locationSlice";
 import { useCallback, useMemo, useReducer } from "react";
 
 //types
@@ -106,8 +99,6 @@ function locationReducer(
 export function useLocationSelect() {
   //location state and dispatch
   const [state, dispatch] = useReducer(locationReducer, initialState);
-  //global dispatch
-  const globalDispatch = useAppDispatch();
 
   //function to reset all
   function clear() {
@@ -152,44 +143,34 @@ export function useLocationSelect() {
   }
 
   //update subregions with region name
-  const updateSubRegions = useCallback(
-    async (regionName: string) => {
-      //select region
-      selectRegion(regionName); //update the form field
-      //get possible sub regions from the api
-      const { subRegions } = await getSubRegions(regionName);
-      //update sub regions
-      dispatch({ type: "SET_STATE", payload: { subRegions } });
-      //send sub regions to global state so, they may be used in edit profile
-      globalDispatch(setSubRegions(subRegions));
-    },
-    [globalDispatch]
-  );
+  const updateSubRegions = useCallback(async (regionName: string) => {
+    //select region
+    selectRegion(regionName); //update the form field
+    //get possible sub regions from the api
+    const { subRegions } = await getSubRegions(regionName);
+    //update sub regions
+    dispatch({ type: "SET_STATE", payload: { subRegions } });
+  }, []);
 
   //update countries with sub region name
-  const updateCountries = useCallback(
-    async (subRegionName: string) => {
-      //select sub region
-      selectSubRegion(subRegionName); //update the form field
-      //get possible countries from the api
-      const { countries } = await getCountries(subRegionName);
-      //update countries
-      const updatedCountries = {
-        countries: countries.map((country) => country.name),
-        countryCodes: Object.fromEntries(
-          countries.map((country) => [country.name, country.code])
-        ),
-      };
-      //update country codes
-      dispatch({
-        type: "SET_STATE",
-        payload: updatedCountries,
-      });
-      //send countries to global state
-      globalDispatch(setCountries(updatedCountries));
-    },
-    [globalDispatch]
-  );
+  const updateCountries = useCallback(async (subRegionName: string) => {
+    //select sub region
+    selectSubRegion(subRegionName); //update the form field
+    //get possible countries from the api
+    const { countries } = await getCountries(subRegionName);
+    //update countries
+    const updatedCountries = {
+      countries: countries.map((country) => country.name),
+      countryCodes: Object.fromEntries(
+        countries.map((country) => [country.name, country.code])
+      ),
+    };
+    //update country codes
+    dispatch({
+      type: "SET_STATE",
+      payload: updatedCountries,
+    });
+  }, []);
 
   //update states with the country code
   const updateStates = useCallback(
@@ -210,10 +191,8 @@ export function useLocationSelect() {
         type: "SET_STATE",
         payload: updatedStates,
       });
-      //send states to global state
-      globalDispatch(setStates(updatedStates));
     },
-    [state.countryCodes, globalDispatch]
+    [state.countryCodes]
   );
 
   //update cities with the state and country code
@@ -228,10 +207,8 @@ export function useLocationSelect() {
       );
       //update cities
       dispatch({ type: "SET_STATE", payload: { cities } });
-      //send cities to global state
-      globalDispatch(setCities(cities));
     },
-    [state.stateCodes, state.countryCodes, state.currCountry, globalDispatch]
+    [state.stateCodes, state.countryCodes, state.currCountry]
   );
 
   return useMemo(

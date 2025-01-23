@@ -2,13 +2,15 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./slices/authUiSlice";
 import themeReducer from "./slices/darkSlice";
-import locationReducer from "./slices/locationSlice";
+import locationReducer from "./slices/editSlice";
+import rosaryReducer from "./slices/rosarySlice";
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
     theme: themeReducer,
     location: locationReducer,
+    rosary: rosaryReducer,
   },
 });
 
