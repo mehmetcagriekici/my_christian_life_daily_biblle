@@ -3,6 +3,39 @@ import { SelectChangeEvent } from "@mui/material";
 import { JSX } from "react";
 import { UseFormRegister, FieldValues, Control } from "react-hook-form";
 
+//bible reading type
+type TBibleReading = {
+  dataHeading: string;
+  dataReading1: {
+    heading: string;
+    textArray: string[];
+  };
+  dataReading2: {
+    heading: string;
+    textArray: string[];
+  };
+  dataPsalms: {
+    heading: string;
+    textArray: string[];
+  };
+  dataGospel: {
+    heading: string;
+    textArray: string[];
+  };
+};
+
+type TSaint = {
+  saint: string;
+  link: string;
+};
+
+export type TReflection = {
+  reflection_date: string;
+  reflection_readings: TBibleReading;
+  reflection_saints: TSaint[];
+  reflection: string;
+};
+
 //auth toggle
 export type typeAuthIcons = {
   on: {

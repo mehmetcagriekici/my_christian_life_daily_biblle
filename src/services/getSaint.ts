@@ -5,7 +5,7 @@ import * as cheerio from "cheerio";
 
 //get saint of the day readingfrom evengalizo
 export async function getSaintOfTheDay() {
-  const baseApiKey = process.env.NEXT_EVANGELIZO_API as string;
+  const baseApiKey = process.env.NEXT_PUBLIC_EVANGELIZO_API as string;
   //date format = year/month/day
   const currDate = format(new Date(), "yyyMMdd");
   //final api to get data
@@ -32,7 +32,7 @@ export async function getSaintOfTheDay() {
     if (saint && link)
       saints.push({
         saint,
-        link: `${process.env.NEXT_EVANGELIZO_FEED}${link}`,
+        link: `${process.env.NEXT_PUBLIC_EVANGELIZO_FEED}${link}`,
       });
   });
 

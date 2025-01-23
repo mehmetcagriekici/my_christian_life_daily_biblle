@@ -4,6 +4,7 @@ import authReducer from "./slices/authUiSlice";
 import themeReducer from "./slices/darkSlice";
 import locationReducer from "./slices/editSlice";
 import rosaryReducer from "./slices/rosarySlice";
+import reflectionReducer from "./slices/reflectionSlice";
 
 export const store = configureStore({
   reducer: {
@@ -11,6 +12,7 @@ export const store = configureStore({
     theme: themeReducer,
     location: locationReducer,
     rosary: rosaryReducer,
+    reflection: reflectionReducer,
   },
 });
 
