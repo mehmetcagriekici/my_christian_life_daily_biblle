@@ -2,19 +2,7 @@
 import { createClient } from "@/lib/supabaseClient";
 import { TReflection } from "@/utils/types";
 
-//select user reflections
-export async function getReflections({ id }: { id: string }) {
-  const supabase = createClient();
-
-  //reflections will be created after user initiation, might not exist
-  const { data: reflections } = await supabase
-    .from("reflections")
-    .select("*")
-    .eq("id", id)
-    .single();
-
-  return { reflections };
-}
+//use only in client components
 
 //insert reflection
 export async function sendReflection({

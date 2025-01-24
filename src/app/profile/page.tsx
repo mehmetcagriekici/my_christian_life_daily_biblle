@@ -20,10 +20,6 @@ import { Divider } from "@mui/material";
 import DividerText from "@/components/DividerText";
 
 export default async function ProfilePage() {
-  //get user data from the server
-  const { userData }: { userData: { [key: string]: string | number } } =
-    await getUserData();
-
   //icons
   const icons = {
     email: <EmailIcon className="text-sky-700 dark:text-sky-100" />,
@@ -39,6 +35,12 @@ export default async function ProfilePage() {
     clergy_member: <BadgeIcon className="text-sky-700 dark:text-sky-100" />,
     avatar: <PersonIcon className="text-sky-700 dark:text-sky-100" />,
   };
+
+  //get user data from the server
+  const { userData }: { userData: { [key: string]: string | number } } =
+    await getUserData();
+
+  //get the reflections
 
   return (
     <div className="h-dvh w-dvw relative bg-gray-200 flex justify-center items-center dark:bg-slate-950">
