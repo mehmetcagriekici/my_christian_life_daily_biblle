@@ -1,15 +1,16 @@
 "use client";
 
 //imports
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { useAppDispatch } from "@/store/hooks";
 import {} from "@/store/slices/authUiSlice";
 import {
-  closeReading,
+  closeList,
   openReading,
   setCurrentReflection,
 } from "@/store/slices/reflectionSlice";
 import { TReflection } from "@/utils/types";
 import BookIcon from "@mui/icons-material/Book";
+import BtnPage from "../BtnPage";
 
 export default function ReflectionsList({
   reflections,
@@ -20,17 +21,23 @@ export default function ReflectionsList({
   //set current reflection to the ui state
 
   const dispatch = useAppDispatch();
-  const { isReading } = useAppSelector((s) => s.reflection);
 
   function onClick(reflection: TReflection) {
     dispatch(setCurrentReflection(reflection));
+    dispatch(openReading());
+  }
 
-    if (isReading) dispatch(closeReading());
-    else dispatch(openReading());
+  //close reflections list, open form
+  function openReflectionForm() {
+    dispatch(closeList());
   }
 
   return (
-    <ul className="w-full flex flex-col justify-safe-center items-safe-center gap-5 overflow-y-auto bg-gray-50 p-3 rounded-xl border-2 border-crimson dark:bg-gray-800 dark:border-gold select-none">
+    <ul className="w-full h-full flex flex-col justify-safe-center items-safe-center gap-5 overflow-y-auto bg-gray-50 p-3 rounded-xl border-2 border-crimson dark:bg-gray-800 dark:border-gold select-none">
+      <li>
+        {/*show reflection form*/}
+        <BtnPage onClick={openReflectionForm}>open reflection form</BtnPage>
+      </li>
       {Object.entries(reflections).map(([key, value]) => (
         <li
           key={key}

@@ -24,9 +24,10 @@ export default function ReadReflection() {
 
   //only display if there is a selected reflection, and toggle is on the ReadReflection
   return (
-    <div className="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 z-50 h-full w-full bg-sky-50 shadow rounded select-none overflow-y-auto dark:bg-sky-950 flex flex-col justify-safe-center items-safe-center gap-5 p-3">
-      {/*close read open form*/}
+    <div className="h-full w-full bg-sky-50 shadow rounded select-none overflow-y-auto dark:bg-sky-950 flex flex-col justify-safe-center items-safe-center gap-5 p-3">
       <section>
+        {/*show reflection form*/}
+        {/*show reflections list*/}
         <BtnPage onClick={() => dispatch(closeReading())}>
           close reading
         </BtnPage>

@@ -12,20 +12,31 @@ import { getSaintOfTheDay } from "@/services/getSaint";
 import { sendReflection } from "@/services/reflectionsClientServices";
 import { TReflection } from "@/utils/types";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { setReflectionText } from "@/store/slices/reflectionSlice";
+import {
+  openList,
+  openReading,
+  setReflectionText,
+} from "@/store/slices/reflectionSlice";
 import { useState } from "react";
 import BtnPage from "../BtnPage";
 
 export default function ReflectionForm({
   id,
-  reflectionToday,
+  reflections,
 }: {
   id: string;
-  reflectionToday: TReflection;
+  reflections: { [key: string]: TReflection };
 }) {
   //todays reflection
-  const { reflectionText } = useAppSelector((s) => s.reflection);
+  const { reflectionText, currentReflection } = useAppSelector(
+    (s) => s.reflection
+  );
   const dispatch = useAppDispatch();
+
+  //get the current date, used as reflections key
+  const today = format(new Date(), "y-MM-dd");
+
+  const reflectionToday = reflections[today];
 
   //current reflection text state to see the saved reflection right away
   const [localReflectionText, setLocalReflectionText] = useState(
@@ -35,9 +46,6 @@ export default function ReflectionForm({
       ? reflectionToday.reflection
       : reflectionText
   );
-
-  //get the current date
-  const today = format(new Date(), "y-MM-dd");
 
   //use form
   const { handleSubmit, reset, register } = useForm();
@@ -60,11 +68,23 @@ export default function ReflectionForm({
     let reflection_data: TReflection = {
       reflection,
       reflection_date,
-      reflection_readings: reflectionToday.reflection_readings,
-      reflection_saints: reflectionToday.reflection_saints,
+      reflection_readings: {
+        dataHeading: "",
+        dataGospel: { heading: "", textArray: [] },
+        dataPsalms: { heading: "", textArray: [] },
+        dataReading1: { heading: "", textArray: [] },
+        dataReading2: { heading: "", textArray: [] },
+      },
+      reflection_saints: [],
     };
 
     if (reflectionToday) {
+      reflection_data = {
+        reflection,
+        reflection_date,
+        reflection_readings: reflectionToday.reflection_readings,
+        reflection_saints: reflectionToday.reflection_saints,
+      };
     } else {
       //if there is no reflectionToday
       // get the daily bible readings
@@ -103,11 +123,35 @@ export default function ReflectionForm({
     reset();
   }
 
+  //journal navigation functions
+  function readCurrentReflection() {
+    dispatch(openReading());
+  }
+
+  function showPastReflections() {
+    dispatch(openList());
+  }
+
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="relative w-full h-5/6 flex flex-col justify-center items-center gap-3"
+      className="w-full h-full flex flex-col justify-center items-center gap-3"
     >
+      <section className="flex">
+        {/*read current reflection*/}
+        {currentReflection?.reflection && (
+          <BtnPage onClick={readCurrentReflection}>
+            read current reflection
+          </BtnPage>
+        )}
+        {/*show past reflections*/}
+        {Object.values(reflections).length ? (
+          <BtnPage onClick={showPastReflections}>show past reflections</BtnPage>
+        ) : (
+          ""
+        )}
+      </section>
+      <Divider flexItem variant="middle" className="bg-gold dark:bg-white" />
       {/*reflection date read-only*/}
       <section className="w-1/3 flex justify-center items-center gap-3 font-quotePrimary uppercase text-gray-900 dark:text-white text-sm md:text-base">
         <label
@@ -127,7 +171,7 @@ export default function ReflectionForm({
       </section>
       <Divider flexItem variant="middle" className="bg-gold dark:bg-white" />
       {/*reset edit*/}
-      {reflectionToday.reflection ? (
+      {reflectionText ? (
         <section>
           <BtnPage onClick={resetEdit}>Reset Edit</BtnPage>
         </section>
@@ -136,7 +180,7 @@ export default function ReflectionForm({
       )}
 
       {/*reflection text field*/}
-      <section className="relative w-full flex flex-col justify-safe-center gap-3 items-safe-center overflow-y-auto rounded p-1">
+      <section className="relative w-full flex flex-col justify-safe-center gap-3 items-safe-center rounded p-1">
         <label
           htmlFor="reflection"
           className="font-quotePrimary text-sky-900 dark:text-sky-100"
@@ -145,35 +189,37 @@ export default function ReflectionForm({
           <span>your reflection</span>
         </label>
 
-        <TextField
-          {...register("reflection", {
-            required: true,
-            value: localReflectionText,
-            onChange: (e) => {
-              setLocalReflectionText(e.target.value);
-              dispatch(setReflectionText(e.target.value));
-            },
-          })}
-          id="reflection"
-          label="To create is to reflect the Creator. (St. John Paul II)"
-          multiline
-          fullWidth
-          variant="outlined"
-          slotProps={{
-            input: {
-              className: "text-gray-900 dark:text-gray-200",
-            },
-            inputLabel: {
-              className: "text-sky-900 dark:text-gold indent-2",
-            },
-          }}
-          className="bg-gray-200 rounded dark:bg-gray-800"
-        />
+        <div className="w-full flex justify-safe-center items-safe-center overflow-y-auto p-3">
+          <TextField
+            {...register("reflection", {
+              required: true,
+              value: localReflectionText,
+              onChange: (e) => {
+                setLocalReflectionText(e.target.value);
+                dispatch(setReflectionText(e.target.value));
+              },
+            })}
+            id="reflection"
+            label="To create is to reflect the Creator. (St. John Paul II)"
+            multiline
+            fullWidth
+            variant="outlined"
+            slotProps={{
+              input: {
+                className: "text-gray-900 dark:text-gray-200",
+              },
+              inputLabel: {
+                className: "text-sky-900 dark:text-gold indent-2",
+              },
+            }}
+            className="bg-gray-200 rounded dark:bg-gray-800 "
+          />
+        </div>
       </section>
 
       {/*submit*/}
-      <section className="absolute top-full mt-5">
-        <SubmitBtn>{reflectionToday ? "Send Edit" : "Submit"}</SubmitBtn>
+      <section>
+        <SubmitBtn>{reflectionText ? "Send Edit" : "Submit"}</SubmitBtn>
       </section>
     </form>
   );

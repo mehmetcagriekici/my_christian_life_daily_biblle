@@ -1,6 +1,12 @@
 //imports
 import { formInputProps } from "@/utils/types";
-import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import {
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+} from "@mui/material";
 
 //possible props
 //pattern
@@ -18,6 +24,23 @@ export default function FormInput({
   onChange = () => {},
   readonly = false,
 }: formInputProps) {
+  //file input
+  if (type === "file")
+    return (
+      <section className="flex flex-col justify-center items-center gap-3 w-full select-none text-stone-800">
+        <InputLabel className="flex flex-col justify-center items-center font-ui dark:text-gray-200">
+          {icon.emoji}
+          <span>{icon.label}</span>
+        </InputLabel>
+        <input
+          {...register("avatar")}
+          type={type}
+          accept=".jpg, .jpeg, .png"
+          onChange={onChange}
+          className="w-full text-xl indent-2 p-1 rounded-sm bg-gray-300 outline-none  font-serifPrimary tracking-wide hover:text-sky-800 hover:bg-gray-200 border-2 border-gray-200 hover:border-gray-400"
+        />
+      </section>
+    );
   //isSelect
   //select element with options coming as props
   return (
@@ -33,7 +56,7 @@ export default function FormInput({
             className="w-full text-sm p-1 rounded-sm bg-gray-300 outline-none font-serifPrimary tracking-wide hover:text-sky-800 hover:bg-gray-200 border-2 border-gray-200 hover:border-gray-400"
             defaultValue={""}
             value={value}
-            onChange={onChange}
+            onChange={(e: SelectChangeEvent<string>) => onChange(e)}
             label={icon.label}
             readOnly={readonly}
           >

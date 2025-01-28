@@ -26,8 +26,8 @@ interface EditSlice extends LocationSlice {
   state: string;
   city: string;
   church: string;
-  avatar: string;
   clergy_member: string;
+  openEdit: boolean;
 }
 
 // Define the initial state using that type
@@ -43,8 +43,8 @@ const initialState: EditSlice = {
   state: "",
   city: "",
   church: "",
-  avatar: "",
   clergy_member: "",
+  openEdit: false,
 };
 
 export const locationSlice = createSlice({
@@ -97,8 +97,8 @@ export const locationSlice = createSlice({
     setClergy: (state, action: PayloadAction<string>) => {
       state.clergy_member = action.payload;
     },
-    setAvatar: (state, action: PayloadAction<string>) => {
-      state.avatar = action.payload;
+    setOpenEdit: (state, action: PayloadAction<boolean>) => {
+      state.openEdit = action.payload;
     },
   },
 });
@@ -116,7 +116,7 @@ export const {
   setState,
   setSubRegion,
   setUsername,
-  setAvatar,
+  setOpenEdit,
 } = locationSlice.actions;
 
 export default locationSlice.reducer;

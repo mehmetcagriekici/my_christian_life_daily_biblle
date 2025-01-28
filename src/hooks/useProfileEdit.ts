@@ -3,7 +3,6 @@ import { getCities, getStates } from "@/services/getCities";
 import { getCountries, getSubRegions } from "@/services/getCountries";
 import { useCallback, useMemo, useReducer, useEffect } from "react";
 import {
-  setAvatar,
   setChurch,
   setCities,
   setCity,
@@ -23,7 +22,6 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 type editState = {
   regions: string[];
   clergy_options: string[];
-  openEdit: boolean;
 };
 
 type editAction =
@@ -51,7 +49,9 @@ function editReducer(state: editState, action: editAction) {
 export function useProfileEdit({
   initialStateData,
 }: {
-  initialStateData: { [key: string]: string | number };
+  initialStateData:
+    | { [key: string]: string | number }
+    | { [key: string]: { file: File; file_name: string } };
 }) {
   const initialState: editState = useMemo(
     () => ({
@@ -60,13 +60,12 @@ export function useProfileEdit({
         "No, I am not an official clergy member.",
         "Yes, I am an official clergy member.",
       ],
-      openEdit: false,
     }),
     []
   );
 
   //edit profile form state
-  const [state, dispatch] = useReducer(editReducer, initialState);
+  const [state] = useReducer(editReducer, initialState);
   //global state
   const { states, countries } = useAppSelector((s) => s.location);
 
@@ -85,7 +84,6 @@ export function useProfileEdit({
       globalDispatch(setState(initialStateData.state as string));
       globalDispatch(setCity(initialStateData.city as string));
       globalDispatch(setChurch(initialStateData.church as string));
-      globalDispatch(setAvatar(initialStateData.avatar as string));
       globalDispatch(setClergy(initialStateData.clergy_member as string));
 
       const { subRegions } = await getSubRegions(
@@ -141,16 +139,6 @@ export function useProfileEdit({
     fetchOptions();
   }, [globalDispatch, initialStateData]);
 
-  //open edit form
-  function openEditForm() {
-    dispatch({ type: "SET_STATE", payload: { openEdit: true } });
-  }
-
-  //close edit form
-  function closeEditForm() {
-    dispatch({ type: "SET_STATE", payload: { openEdit: false } });
-  }
-
   //control username
   const controlUsername = useCallback(
     (username: string) => {
@@ -172,14 +160,6 @@ export function useProfileEdit({
   const controlClergyMember = useCallback(
     (clergy_member: string) => {
       globalDispatch(setClergy(clergy_member));
-    },
-    [globalDispatch]
-  );
-
-  //control avatar (src)
-  const controlAvatar = useCallback(
-    (avatar: string) => {
-      globalDispatch(setAvatar(avatar));
     },
     [globalDispatch]
   );
@@ -254,7 +234,7 @@ export function useProfileEdit({
       globalDispatch(setState(stateName));
       //get all cities using the state and country codes
       const { cities } = await getCities(
-        countries.countryCodes[initialStateData.country],
+        countries.countryCodes[initialStateData.country as string],
         states.stateCodes[stateName]
       );
       //update cities
@@ -276,12 +256,9 @@ export function useProfileEdit({
       updateStates,
       updateCities,
       controlCity,
-      controlAvatar,
       controlChurch,
       controlClergyMember,
       controlUsername,
-      openEditForm,
-      closeEditForm,
     }),
     [
       state,
@@ -289,7 +266,6 @@ export function useProfileEdit({
       updateCountries,
       updateStates,
       updateCities,
-      controlAvatar,
       controlChurch,
       controlClergyMember,
       controlUsername,

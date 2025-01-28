@@ -1,6 +1,6 @@
 //imports
 import { SelectChangeEvent } from "@mui/material";
-import { JSX } from "react";
+import { ChangeEvent, JSX, ReactNode } from "react";
 import { UseFormRegister, FieldValues, Control } from "react-hook-form";
 
 //bible reading type
@@ -62,7 +62,10 @@ export type formInputProps = {
   type: string;
   control?: Control;
   value?: string;
-  onChange?: (e: SelectChangeEvent<string>) => void;
+  onChange?: (
+    e: ChangeEvent<HTMLInputElement> | SelectChangeEvent<string>,
+    child?: ReactNode
+  ) => void;
   readonly?: boolean;
 };
 
