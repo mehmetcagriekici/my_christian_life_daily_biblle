@@ -1,7 +1,7 @@
 "use client";
 
 //imports
-import { JSX } from "react";
+import { JSX, useState } from "react";
 import BtnPage from "../BtnPage";
 import { FieldValues, useForm } from "react-hook-form";
 import FormInput from "../FormInput";
@@ -10,10 +10,11 @@ import { useProfileEdit } from "@/hooks/useProfileEdit";
 import EditFormSection from "./EditFormSection";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { updateAvatar, updateUser } from "@/services/getUser";
-import { SelectChangeEvent } from "@mui/material";
+import { Alert, SelectChangeEvent } from "@mui/material";
 import { AVATAR } from "@/utils/constants";
 import DividerText from "../DividerText";
 import { setOpenEdit } from "@/store/slices/editSlice";
+import FormLoading from "../FormLoading";
 
 export default function EditProfile({
   icons,
@@ -54,7 +55,19 @@ export default function EditProfile({
   const dispatch = useAppDispatch();
 
   //react hook form
-  const { register, handleSubmit, reset } = useForm();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
+    mode: "onSubmit",
+  });
+
+  //form loading
+  const [isLoading, setIsLoading] = useState(false);
+  //form errors
+  const [formError, setFormError] = useState("");
 
   //functions
   function onChurchChange(e: SelectChangeEvent<string>) {
@@ -109,30 +122,41 @@ export default function EditProfile({
 
   //function submit
   async function onSubmit(data: FieldValues) {
-    //update avatar
-    const file = data.avatar[0];
+    try {
+      setIsLoading(true);
+      //update avatar
+      const file = data.avatar[0];
 
-    //update user auth
-    //update user table
-    //overwrite avatar column
-    await updateUser({ data: { ...data, avatar: AVATAR } });
+      //update user auth
+      //update user table
+      //overwrite avatar column
+      await updateUser({ data: { ...data, avatar: AVATAR } });
 
-    //storage
-    //users table avatar already updated in update user
-    if (file) await updateAvatar({ file, file_name: AVATAR });
-
-    //reset
-    reset();
-
-    //return to user info
-    dispatch(setOpenEdit(false));
+      //storage
+      //users table avatar already updated in update user
+      if (file) await updateAvatar({ file, file_name: AVATAR });
+    } catch (error) {
+      setFormError(error as string);
+      throw new Error(error as string);
+    } finally {
+      //return to user info
+      dispatch(setOpenEdit(false));
+      setIsLoading(false);
+    }
   }
+
+  if (isLoading) return <FormLoading />;
 
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
       className="w-full h-full flex flex-col justify-safe-center items-safe-center gap-3 border-2 border-gold rounded-lg p-3 overflow-y-auto bg-gray-100 select-none dark:border-white dark:bg-gray-900 md:text-xl"
     >
+      {formError && (
+        <Alert variant="filled" severity="error">
+          {formError}
+        </Alert>
+      )}
       <DividerText
         quote="Dominus illuminatio mea et salus mea; quem timebo?"
         psalm="Psalm 26:1"
@@ -147,6 +171,7 @@ export default function EditProfile({
           fieldName="avatar"
           icon={{ label: "avatar", emoji: icons["avatar"] }}
           type="file"
+          error={errors.avatar}
         />
       </EditFormSection>
 
@@ -158,6 +183,7 @@ export default function EditProfile({
           type="text"
           value={username}
           onChange={onUserNameChange}
+          error={errors.username}
         />
       </EditFormSection>
 
@@ -171,6 +197,7 @@ export default function EditProfile({
           value={region}
           options={state.regions}
           onChange={onRegionChange}
+          error={errors.region}
         />
       </EditFormSection>
 
@@ -185,6 +212,7 @@ export default function EditProfile({
             value={sub_region}
             options={subRegions}
             onChange={onSubRegionChange}
+            error={errors.sub_region}
           />
         </EditFormSection>
       ) : (
@@ -202,6 +230,7 @@ export default function EditProfile({
             value={country}
             options={countries.countries}
             onChange={onCountryChange}
+            error={errors.country}
           />
         </EditFormSection>
       ) : (
@@ -219,6 +248,7 @@ export default function EditProfile({
             value={country_state}
             options={states.states}
             onChange={onStateChange}
+            error={errors.state}
           />
         </EditFormSection>
       ) : (
@@ -236,6 +266,7 @@ export default function EditProfile({
             value={city}
             options={cities}
             onChange={onCityChange}
+            error={errors.city}
           />
         </EditFormSection>
       ) : (
@@ -252,6 +283,7 @@ export default function EditProfile({
           value={clergy_member}
           options={state.clergy_options}
           onChange={onClergyMemberChange}
+          error={errors.clergy_member}
         />
       </EditFormSection>
 
@@ -263,6 +295,7 @@ export default function EditProfile({
           type="text"
           value={church}
           onChange={onChurchChange}
+          error={errors.church}
         />
       </EditFormSection>
 

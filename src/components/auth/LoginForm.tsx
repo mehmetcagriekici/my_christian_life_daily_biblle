@@ -3,10 +3,12 @@ import { FieldValues, useForm } from "react-hook-form";
 import EmailIcon from "@mui/icons-material/Email";
 import PasswordIcon from "@mui/icons-material/Password";
 import FormInput from "../FormInput";
-import { Divider } from "@mui/material";
+import { Alert, Divider } from "@mui/material";
 import SubmitBtn from "../SubmitBtn";
 import { userLogin } from "@/services/getUser";
 import DividerText from "../DividerText";
+import { useState } from "react";
+import FormLoading from "../FormLoading";
 
 //login form
 /*email + password*/
@@ -24,35 +26,62 @@ export default function LoginForm() {
   };
 
   //use hook form
-  const { register, handleSubmit, reset } = useForm();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm();
+
+  //login form is loading
+  const [isLoading, setIsLoading] = useState(false);
+  //form errors
+  const [formError, setFormError] = useState("");
 
   //submit
   async function onSubmit(formData: FieldValues) {
-    const { email, password } = formData;
-    //server login with data
-    await userLogin({ email, password });
+    try {
+      setIsLoading(true);
+      const { email, password } = formData;
+      //server login with data
+      await userLogin({ email, password });
 
-    //reset all fields
-    reset();
+      //reset all fields
+    } catch (error) {
+      setFormError("Login Error!");
+      throw new Error(error as string);
+    } finally {
+      reset();
+      setIsLoading(false);
+    }
   }
+
+  if (isLoading) return <FormLoading />;
 
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
       className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-full w-full overflow-y-auto p-3 rounded flex flex-col justify-center items-center gap-5"
     >
+      {formError && (
+        <Alert variant="filled" severity="error">
+          {formError}
+        </Alert>
+      )}
       {/*A cross image (Red)*/}
       <FormInput
         icon={icons.email}
         fieldName="email"
         register={register}
         type="email"
+        error={errors.email}
       />
       <FormInput
         icon={icons.password}
         fieldName="password"
         register={register}
         type="password"
+        error={errors.password}
       />
       <SubmitBtn>Login</SubmitBtn>
       {/*Another Cross (Gold)*/}

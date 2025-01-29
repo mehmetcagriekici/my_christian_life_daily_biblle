@@ -1,7 +1,8 @@
 //imports
 import "../styles/styles.css";
-import React from "react";
+import React, { Suspense } from "react";
 import Providers from "@/components/Providers";
+import Loading from "@/app/Loading";
 
 /*Font Families*/
 import "@fontsource/poppins/400.css";
@@ -26,7 +27,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Providers>{children}</Providers>
+        <Suspense fallback={<Loading />}>
+          <Providers>{children}</Providers>
+        </Suspense>
       </body>
     </html>
   );

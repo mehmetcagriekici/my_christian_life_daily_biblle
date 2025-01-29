@@ -1,7 +1,14 @@
 //imports
 import { SelectChangeEvent } from "@mui/material";
 import { ChangeEvent, JSX, ReactNode } from "react";
-import { UseFormRegister, FieldValues, Control } from "react-hook-form";
+import {
+  UseFormRegister,
+  FieldValues,
+  Control,
+  FieldError,
+  Merge,
+  FieldErrorsImpl,
+} from "react-hook-form";
 
 //bible reading type
 type TBibleReading = {
@@ -48,6 +55,21 @@ export type typeAuthIcons = {
   };
 };
 
+//type user
+export type typeSignupUser = {
+  email: string;
+  username: string;
+  age: number;
+  gender: string;
+  region: string;
+  sub_region: string;
+  country: string;
+  state: string;
+  city: string;
+  church: string;
+  clergy_member: string;
+};
+
 //flexible form input
 export type formInputProps = {
   icon: {
@@ -67,21 +89,10 @@ export type formInputProps = {
     child?: ReactNode
   ) => void;
   readonly?: boolean;
-};
-
-//type user
-export type typeSignupUser = {
-  email: string;
-  username: string;
-  age: number;
-  gender: string;
-  region: string;
-  sub_region: string;
-  country: string;
-  state: string;
-  city: string;
-  church: string;
-  clergy_member: string;
+  error:
+    | FieldError
+    | Merge<FieldError, FieldErrorsImpl<typeSignupUser>>
+    | undefined;
 };
 
 export type fullSignup = typeSignupUser & {

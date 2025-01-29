@@ -5,7 +5,7 @@ import { FieldValues, useForm } from "react-hook-form";
 import SubmitBtn from "../SubmitBtn";
 import { format } from "date-fns";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
-import { Divider, TextField } from "@mui/material";
+import { Alert, Divider, TextField } from "@mui/material";
 import NotesIcon from "@mui/icons-material/Notes";
 import { getDailyBible } from "@/services/getBible";
 import { getSaintOfTheDay } from "@/services/getSaint";
@@ -19,6 +19,7 @@ import {
 } from "@/store/slices/reflectionSlice";
 import { useState } from "react";
 import BtnPage from "../BtnPage";
+import FormLoading from "../FormLoading";
 
 export default function ReflectionForm({
   id,
@@ -50,6 +51,11 @@ export default function ReflectionForm({
   //use form
   const { handleSubmit, reset, register } = useForm();
 
+  //form loading
+  const [isLoading, setIsLoading] = useState(false);
+  //form errors
+  const [formError, setFormError] = useState("");
+
   //reset edit
   function resetEdit() {
     setLocalReflectionText(reflectionToday.reflection);
@@ -59,68 +65,76 @@ export default function ReflectionForm({
 
   //submit and edit
   async function onSubmit(formData: FieldValues) {
-    //form fields
-    const { reflection, reflection_date } = formData as {
-      reflection: string;
-      reflection_date: string;
-    };
+    try {
+      setIsLoading(true);
+      //form fields
+      const { reflection, reflection_date } = formData as {
+        reflection: string;
+        reflection_date: string;
+      };
 
-    let reflection_data: TReflection = {
-      reflection,
-      reflection_date,
-      reflection_readings: {
-        dataHeading: "",
-        dataGospel: { heading: "", textArray: [] },
-        dataPsalms: { heading: "", textArray: [] },
-        dataReading1: { heading: "", textArray: [] },
-        dataReading2: { heading: "", textArray: [] },
-      },
-      reflection_saints: [],
-    };
-
-    if (reflectionToday) {
-      reflection_data = {
+      let reflection_data: TReflection = {
         reflection,
         reflection_date,
-        reflection_readings: reflectionToday.reflection_readings,
-        reflection_saints: reflectionToday.reflection_saints,
-      };
-    } else {
-      //if there is no reflectionToday
-      // get the daily bible readings
-      const {
-        dataHeading,
-        dataReading1,
-        dataReading2,
-        dataGospel,
-        dataPsalms,
-      } = await getDailyBible();
-      //get the saints
-      const { saints } = await getSaintOfTheDay();
-
-      //build the data
-      const reflection_readings = {
-        dataHeading,
-        dataReading1,
-        dataPsalms,
-        dataReading2,
-        dataGospel,
+        reflection_readings: {
+          dataHeading: "",
+          dataGospel: { heading: "", textArray: [] },
+          dataPsalms: { heading: "", textArray: [] },
+          dataReading1: { heading: "", textArray: [] },
+          dataReading2: { heading: "", textArray: [] },
+        },
+        reflection_saints: [],
       };
 
-      reflection_data = {
-        reflection_date,
-        reflection_readings,
-        reflection_saints: saints,
-        reflection,
-      };
+      if (reflectionToday) {
+        reflection_data = {
+          reflection,
+          reflection_date,
+          reflection_readings: reflectionToday.reflection_readings,
+          reflection_saints: reflectionToday.reflection_saints,
+        };
+      } else {
+        //if there is no reflectionToday
+        // get the daily bible readings
+        const {
+          dataHeading,
+          dataReading1,
+          dataReading2,
+          dataGospel,
+          dataPsalms,
+        } = await getDailyBible();
+        //get the saints
+        const { saints } = await getSaintOfTheDay();
+
+        //build the data
+        const reflection_readings = {
+          dataHeading,
+          dataReading1,
+          dataPsalms,
+          dataReading2,
+          dataGospel,
+        };
+
+        reflection_data = {
+          reflection_date,
+          reflection_readings,
+          reflection_saints: saints,
+          reflection,
+        };
+      }
+      //update text field
+      dispatch(setReflectionText(reflection));
+      //send it to the server
+      await sendReflection({ id, reflection_data });
+    } catch (error) {
+      setFormError("Reflection Error!");
+      throw new Error(error as string);
+    } finally {
+      //reset fields
+      reset();
+
+      setIsLoading(false);
     }
-    //update text field
-    dispatch(setReflectionText(reflection));
-    //send it to the server
-    await sendReflection({ id, reflection_data });
-
-    //reset fields
-    reset();
   }
 
   //journal navigation functions
@@ -132,11 +146,18 @@ export default function ReflectionForm({
     dispatch(openList());
   }
 
+  if (isLoading) return <FormLoading />;
+
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
       className="w-full h-full flex flex-col justify-center items-center gap-3"
     >
+      {formError && (
+        <Alert variant="filled" severity="error">
+          {formError}
+        </Alert>
+      )}
       <section className="flex">
         {/*read current reflection*/}
         {currentReflection?.reflection && (
