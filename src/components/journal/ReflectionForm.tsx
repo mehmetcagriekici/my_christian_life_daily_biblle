@@ -12,14 +12,11 @@ import { getSaintOfTheDay } from "@/services/getSaint";
 import { sendReflection } from "@/services/reflectionsClientServices";
 import { TReflection } from "@/utils/types";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import {
-  openList,
-  openReading,
-  setReflectionText,
-} from "@/store/slices/reflectionSlice";
+import { openList, setReflectionText } from "@/store/slices/reflectionSlice";
 import { useState } from "react";
 import BtnPage from "../BtnPage";
 import FormLoading from "../FormLoading";
+import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 
 export default function ReflectionForm({
   id,
@@ -29,15 +26,13 @@ export default function ReflectionForm({
   reflections: { [key: string]: TReflection };
 }) {
   //todays reflection
-  const { reflectionText, currentReflection } = useAppSelector(
-    (s) => s.reflection
-  );
+  const { reflectionText } = useAppSelector((s) => s.reflection);
   const dispatch = useAppDispatch();
 
   //get the current date, used as reflections key
   const today = format(new Date(), "y-MM-dd");
 
-  const reflectionToday = reflections[today];
+  const reflectionToday = reflections ? reflections[today] : null;
 
   //current reflection text state to see the saved reflection right away
   const [localReflectionText, setLocalReflectionText] = useState(
@@ -58,8 +53,10 @@ export default function ReflectionForm({
 
   //reset edit
   function resetEdit() {
-    setLocalReflectionText(reflectionToday.reflection);
-    dispatch(setReflectionText(reflectionToday.reflection));
+    if (reflectionToday) {
+      setLocalReflectionText(reflectionToday.reflection);
+      dispatch(setReflectionText(reflectionToday.reflection));
+    }
     reset();
   }
 
@@ -137,11 +134,6 @@ export default function ReflectionForm({
     }
   }
 
-  //journal navigation functions
-  function readCurrentReflection() {
-    dispatch(openReading());
-  }
-
   function showPastReflections() {
     dispatch(openList());
   }
@@ -151,7 +143,7 @@ export default function ReflectionForm({
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="w-full h-full flex flex-col justify-center items-center gap-3"
+      className="w-11/12 h-5/6 xl:w-3/5 flex flex-col justify-center items-center gap-4 bg-gray-100 dark:bg-gray-900 rounded"
     >
       {formError && (
         <Alert variant="filled" severity="error">
@@ -159,15 +151,12 @@ export default function ReflectionForm({
         </Alert>
       )}
       <section className="flex">
-        {/*read current reflection*/}
-        {currentReflection?.reflection && (
-          <BtnPage onClick={readCurrentReflection}>
-            read current reflection
-          </BtnPage>
-        )}
         {/*show past reflections*/}
-        {Object.values(reflections).length ? (
-          <BtnPage onClick={showPastReflections}>show past reflections</BtnPage>
+        {reflections ? (
+          <BtnPage onClick={showPastReflections}>
+            <LibraryBooksIcon />
+            <span>display reflections</span>
+          </BtnPage>
         ) : (
           ""
         )}
@@ -177,7 +166,7 @@ export default function ReflectionForm({
       <section className="w-1/3 flex justify-center items-center gap-3 font-quotePrimary uppercase text-gray-900 dark:text-white text-sm md:text-base">
         <label
           htmlFor="reflection_date"
-          className="flex gap-1 justify-center items-center"
+          className="w-full flex gap-1 justify-center items-center"
         >
           <CalendarTodayIcon className="text-sky-900 dark:text-sky-600" />
           <span>today</span>
@@ -223,6 +212,7 @@ export default function ReflectionForm({
             id="reflection"
             label="To create is to reflect the Creator. (St. John Paul II)"
             multiline
+            rows={8}
             fullWidth
             variant="outlined"
             slotProps={{

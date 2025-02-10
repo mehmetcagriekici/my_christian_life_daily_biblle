@@ -1,16 +1,13 @@
 //saint of the day component
-//data coming from the api
 
 //imports
-import { getSaintOfTheDay } from "@/services/getSaint";
+import { TSaint } from "@/utils/types";
 import { Divider } from "@mui/material";
+import HomeContainer from "./HomeContainer";
 
-export default async function SaintReading() {
-  //data
-  const { saints } = await getSaintOfTheDay();
-
+export default function SaintReading({ saints }: { saints: TSaint[] }) {
   return saints.length > 0 ? (
-    <section className="flex flex-col justify-center items-center p-5 gap-4 md:bg-gray-100 mt-3 mb-5 md:w-3/5 lg:w-2/5 overflow-y-auto dark:bg-slate-800">
+    <HomeContainer>
       <h1 className="font-serifPrimary font-bold uppercase tracking-wider text-lg text-stone-900 lg:text-xl text-center dark:text-gray-200">
         saints of the day
       </h1>
@@ -32,7 +29,7 @@ export default async function SaintReading() {
           </li>
         ))}
       </ul>
-    </section>
+    </HomeContainer>
   ) : (
     ""
   );

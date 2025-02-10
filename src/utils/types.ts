@@ -11,7 +11,7 @@ import {
 } from "react-hook-form";
 
 //bible reading type
-type TBibleReading = {
+export type TBibleReading = {
   dataHeading: string;
   dataReading1: {
     heading: string;
@@ -31,7 +31,7 @@ type TBibleReading = {
   };
 };
 
-type TSaint = {
+export type TSaint = {
   saint: string;
   link: string;
 };

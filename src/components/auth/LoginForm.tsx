@@ -3,7 +3,7 @@ import { FieldValues, useForm } from "react-hook-form";
 import EmailIcon from "@mui/icons-material/Email";
 import PasswordIcon from "@mui/icons-material/Password";
 import FormInput from "../FormInput";
-import { Alert, Divider } from "@mui/material";
+import { Alert, Divider, SelectChangeEvent } from "@mui/material";
 import SubmitBtn from "../SubmitBtn";
 import { userLogin } from "@/services/getUser";
 import DividerText from "../DividerText";
@@ -32,6 +32,19 @@ export default function LoginForm() {
     reset,
     formState: { errors },
   } = useForm();
+
+  //form control values
+  const [emailInput, setEmailInput] = useState("");
+  const [passwordInput, setPasswordInput] = useState("");
+
+  //form control functions
+  function onEmailChange(e: SelectChangeEvent<string>) {
+    setEmailInput(e.target.value);
+  }
+
+  function onPasswordChange(e: SelectChangeEvent<string>) {
+    setPasswordInput(e.target.value);
+  }
 
   //login form is loading
   const [isLoading, setIsLoading] = useState(false);
@@ -75,6 +88,8 @@ export default function LoginForm() {
         register={register}
         type="email"
         error={errors.email}
+        value={emailInput}
+        onChange={onEmailChange}
       />
       <FormInput
         icon={icons.password}
@@ -82,6 +97,8 @@ export default function LoginForm() {
         register={register}
         type="password"
         error={errors.password}
+        value={passwordInput}
+        onChange={onPasswordChange}
       />
       <SubmitBtn>Login</SubmitBtn>
       {/*Another Cross (Gold)*/}

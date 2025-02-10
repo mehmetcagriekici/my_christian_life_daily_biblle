@@ -54,7 +54,7 @@ export default function UserInfo({
   }
 
   return (
-    <ul className="w-full flex flex-col justify-safe-center items-safe-center gap-3 border-2 border-gold rounded-lg p-3 overflow-y-auto bg-gray-100 select-none dark:border-white dark:bg-gray-900 md:text-xl">
+    <ul className="w-full flex flex-col justify-safe-center items-safe-center gap-3 rounded-lg p-3 overflow-y-auto lg:bg-gray-100 select-none lg:dark:bg-gray-900 md:text-xl">
       <li>
         <DividerText
           quote="Dominus petra mea, et fortitudo mea, et salvator meus."

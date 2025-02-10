@@ -1,18 +1,18 @@
 //daily bible reading component
-//data coming from the api
 
 //imports
-import { getDailyBible } from "@/services/getBible";
 import { Divider } from "@mui/material";
 import PresentText from "../PresentText";
+import { TBibleReading } from "@/utils/types";
+import HomeContainer from "./HomeContainer";
 
-export default async function BibleReading() {
+export default function BibleReading({ bible }: { bible: TBibleReading }) {
   //get data
   const { dataHeading, dataReading1, dataReading2, dataPsalms, dataGospel } =
-    await getDailyBible();
+    bible;
 
   return (
-    <section className="flex flex-col justify-center items-center p-5 gap-4 md:bg-gray-100 mt-3 mb-5 rounded md:w-3/5 lg:w-2/5 overflow-y-auto dark:bg-slate-800">
+    <HomeContainer>
       <h1 className="font-serifPrimary font-bold uppercase tracking-wider text-2xl text-stone-900 lg:text-3xl text-center dark:text-gray-200">
         {dataHeading}
       </h1>
@@ -44,6 +44,6 @@ export default async function BibleReading() {
         heading={dataGospel.heading}
         textArray={dataGospel.textArray}
       />
-    </section>
+    </HomeContainer>
   );
 }

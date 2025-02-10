@@ -33,26 +33,28 @@ export default function ReflectionsList({
   }
 
   return (
-    <ul className="w-full h-full flex flex-col justify-safe-center items-safe-center gap-5 overflow-y-auto bg-gray-50 p-3 rounded-xl border-2 border-crimson dark:bg-gray-800 dark:border-gold select-none">
+    <ul className="w-full h-full xl:w-3/5 flex flex-col justify-safe-center items-safe-center gap-5 overflow-y-auto p-3 rounded-xl select-none">
       <li>
         {/*show reflection form*/}
         <BtnPage onClick={openReflectionForm}>open reflection form</BtnPage>
       </li>
-      {Object.entries(reflections).map(([key, value]) => (
-        <li
-          key={key}
-          className="w-10/12 flex flex-col justify-center items-center p-5 rounded-xl shadow bg-yellow-100 tracking-wide text-gray-900 hover:cursor-pointer hover:bg-yellow-50 dark:hover:bg-yellow-200"
-          onClick={() => onClick(value)}
-        >
-          <BookIcon className="text-crimson" />
-          <span className="font-quotePrimary text-sky-700">
-            {value.reflection_date}
-          </span>
-          <span className="w-full text-nowrap truncate font-serifPrimary">
-            {value.reflection}
-          </span>
-        </li>
-      ))}
+      {reflections
+        ? Object.entries(reflections).map(([key, value]) => (
+            <li
+              key={key}
+              className="w-10/12 flex flex-col justify-center items-center p-5 rounded-xl shadow bg-yellow-100 tracking-wide text-gray-900 hover:cursor-pointer hover:bg-yellow-50 dark:hover:bg-yellow-200"
+              onClick={() => onClick(value)}
+            >
+              <BookIcon className="text-crimson" />
+              <span className="font-quotePrimary text-sky-700">
+                {value.reflection_date}
+              </span>
+              <span className="w-full text-nowrap truncate font-serifPrimary">
+                {value.reflection}
+              </span>
+            </li>
+          ))
+        : ""}
     </ul>
   );
 }

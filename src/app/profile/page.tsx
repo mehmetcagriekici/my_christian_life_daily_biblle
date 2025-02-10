@@ -12,8 +12,6 @@ export default async function ProfilePage() {
 
   return (
     <div className="h-dvh w-dvw relative bg-gray-200 flex justify-center items-center dark:bg-slate-950">
-      {/*NavBar, if there is not session, the app will redirect to auth page*/}
-
       <NavBar isLoggedIn={true} />
       <Suspense fallback={<Loading />}>
         <EditModal userData={userData} />

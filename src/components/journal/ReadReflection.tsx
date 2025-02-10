@@ -24,7 +24,7 @@ export default function ReadReflection() {
 
   //only display if there is a selected reflection, and toggle is on the ReadReflection
   return (
-    <div className="h-full w-full bg-sky-50 shadow rounded select-none overflow-y-auto dark:bg-sky-950 flex flex-col justify-safe-center items-safe-center gap-5 p-3">
+    <div className="h-full w-full select-none overflow-y-auto flex flex-col justify-safe-center items-safe-center gap-5 p-3">
       <section>
         {/*show reflection form*/}
         {/*show reflections list*/}

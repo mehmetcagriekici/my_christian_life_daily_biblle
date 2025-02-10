@@ -15,7 +15,7 @@ export async function getDailyBible() {
   //final api to get data
   const key = `${baseApiKey}date=${currDate}&lang=AM&type=all`;
 
-  //get data (htm/text)
+  //get data (html/text)
   const { data } = await axios.get<string>(key, { responseType: "text" });
 
   if (!data) throw new Error("Failed getting Bible Data from Evangelizo API.");

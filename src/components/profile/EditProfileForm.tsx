@@ -150,7 +150,7 @@ export default function EditProfile({
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="w-full h-full flex flex-col justify-safe-center items-safe-center gap-3 border-2 border-gold rounded-lg p-3 overflow-y-auto bg-gray-100 select-none dark:border-white dark:bg-gray-900 md:text-xl"
+      className="w-full h-full flex flex-col justify-safe-center items-safe-center gap-3 rounded-lg p-3 overflow-y-auto bg-gray-100 select-none dark:bg-gray-900 md:text-xl"
     >
       {formError && (
         <Alert variant="filled" severity="error">

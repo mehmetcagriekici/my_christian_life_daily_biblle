@@ -8,9 +8,9 @@ import Image from "next/image";
 //terms of use
 export default function Footer() {
   return (
-    <footer className="relative w-full p-3 bg-red-800 flex flex-col justify-center items-center gap-5  md:absolute md:top-full dark:bg-emerald-900">
+    <footer className="relative w-full p-3 bg-red-800 flex flex-col justify-center items-center gap-5 dark:bg-emerald-900">
       {/*API*/}
-      <section className="w-full flex justify-center items-center gap-3">
+      <section className="w-full flex xjustify-center items-center gap-3">
         {/*LOGO*/}
         <Image
           src="https://files.evangelizo.org/images/website/logo/logo_2018_118.png"

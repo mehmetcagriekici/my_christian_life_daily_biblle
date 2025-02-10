@@ -58,6 +58,44 @@ export default function SignupForm() {
   const [gender, setGender] = useState("");
   //clergy_member
   const [clergy_member, setclergy_member] = useState("");
+  //email
+  const [email, setEmail] = useState("");
+  //password
+  const [password, setPassword] = useState("");
+  //password confirm
+  const [passwordConfirm, setPasswordConfirm] = useState("");
+  //username
+  const [username, setUsername] = useState("");
+  //age
+  const [age, setAge] = useState("");
+  //church
+  const [church, setChurch] = useState("");
+
+  //form control functions for local values [email-church]
+  function onEmailChange(e: SelectChangeEvent<string>) {
+    setEmail(e.target.value);
+  }
+
+  function onPasswordChange(e: SelectChangeEvent<string>) {
+    setPassword(e.target.value);
+  }
+
+  function onPasswordConfirmChange(e: SelectChangeEvent<string>) {
+    setPasswordConfirm(e.target.value);
+  }
+
+  function onUsernameChange(e: SelectChangeEvent<string>) {
+    setUsername(e.target.value);
+  }
+
+  function onAgeChange(e: SelectChangeEvent<string>) {
+    setAge(e.target.value);
+  }
+
+  function onChurchChange(e: SelectChangeEvent<string>) {
+    setChurch(e.target.value);
+  }
+
   //isLoading
   const [isLoading, setIsLoading] = useState(false);
   //form errors
@@ -92,54 +130,45 @@ export default function SignupForm() {
     } finally {
       //reset
       clear();
-      setclergy_member("");
-      setGender("");
       setIsLoading(false);
     }
   }
 
   //on gender change
   function onGenderChange(e: SelectChangeEvent<string>) {
-    const value = e.target.value;
-    setGender(value);
+    setGender(e.target.value);
   }
 
   //on clergy change
   function onClergyChange(e: SelectChangeEvent<string>) {
-    const value = e.target.value;
-    setclergy_member(value);
+    setclergy_member(e.target.value);
   }
 
   //on region change
   function onRegionChange(e: SelectChangeEvent<string>) {
-    const value = e.target.value;
-    updateSubRegions(value);
+    updateSubRegions(e.target.value);
   }
 
   //on sub region change
   function onSubRegionChange(e: SelectChangeEvent<string>) {
-    const value = e.target.value;
-    updateCountries(value);
+    updateCountries(e.target.value);
   }
 
   //on country change
   function onCountryChange(e: SelectChangeEvent<string>) {
-    const value = e.target.value;
-    updateStates(value);
+    updateStates(e.target.value);
   }
 
   //on state change
   function onStateChange(e: SelectChangeEvent<string>) {
-    const value = e.target.value;
-    updateCities(value);
+    updateCities(e.target.value);
   }
 
   //on city change
   //nothing really happens
   //this is just to control the field
   function onCityChange(e: SelectChangeEvent<string>) {
-    const value = e.target.value;
-    controlCity(value);
+    controlCity(e.target.value);
   }
 
   if (isLoading) return <FormLoading />;
@@ -160,6 +189,8 @@ export default function SignupForm() {
         register={register}
         type="email"
         error={errors.email}
+        value={email}
+        onChange={onEmailChange}
       />
       <Divider flexItem variant="middle" className="bg-gold dark:bg-white" />
       <FormInput
@@ -168,6 +199,8 @@ export default function SignupForm() {
         register={register}
         type="password"
         error={errors.password}
+        value={password}
+        onChange={onPasswordChange}
       />
       <Divider flexItem variant="middle" className="bg-gold dark:bg-white" />
       <FormInput
@@ -176,6 +209,8 @@ export default function SignupForm() {
         register={register}
         type="password"
         error={errors.passwordConfirmation}
+        value={passwordConfirm}
+        onChange={onPasswordConfirmChange}
       />
       <Divider flexItem variant="middle" className="bg-gold dark:bg-white" />
       <FormInput
@@ -184,6 +219,8 @@ export default function SignupForm() {
         register={register}
         type="text"
         error={errors.username}
+        value={username}
+        onChange={onUsernameChange}
       />
       <Divider flexItem variant="middle" className="bg-gold dark:bg-white" />
       <FormInput
@@ -192,6 +229,8 @@ export default function SignupForm() {
         register={register}
         type="number"
         error={errors.age}
+        value={age}
+        onChange={onAgeChange}
       />
       <Divider flexItem variant="middle" className="bg-gold dark:bg-white" />
       <FormInput
@@ -312,6 +351,8 @@ export default function SignupForm() {
         register={register}
         type="text"
         error={errors.church}
+        value={church}
+        onChange={onChurchChange}
       />
       <Divider flexItem variant="middle" className="bg-gold dark:bg-white" />
       <FormInput
