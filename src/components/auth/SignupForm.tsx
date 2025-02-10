@@ -20,6 +20,7 @@ import { useState } from "react";
 import { fullSignup } from "@/utils/types";
 import { userSignup } from "@/services/getUser";
 import FormLoading from "../FormLoading";
+import { useRouter } from "next/navigation";
 
 //signup form
 export default function SignupForm() {
@@ -52,6 +53,9 @@ export default function SignupForm() {
     handleSubmit,
     formState: { errors },
   } = useForm();
+
+  //router
+  const router = useRouter();
 
   //other select values control
   //gender
@@ -128,9 +132,9 @@ export default function SignupForm() {
       setFormError(error as string);
       throw new Error(error as string);
     } finally {
-      //reset
       clear();
-      setIsLoading(false);
+      //navigate to home page
+      router.push("/");
     }
   }
 

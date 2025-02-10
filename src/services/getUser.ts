@@ -3,7 +3,6 @@
 //imports;
 import { createClient } from "@/lib/supabaseServer";
 import { typeSignupUser } from "@/utils/types";
-import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 export async function checkSession() {
@@ -70,9 +69,6 @@ export async function userLogin({
   });
 
   if (error) throw new Error(error.message);
-
-  revalidatePath("/", "layout");
-  redirect("/");
 }
 
 //signup
@@ -107,9 +103,6 @@ export async function userSignup({
     .select();
 
   if (error) throw new Error(error.message);
-
-  revalidatePath("/", "layout");
-  redirect("/");
 }
 
 //update user auth

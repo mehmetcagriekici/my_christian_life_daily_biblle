@@ -9,6 +9,7 @@ import { userLogin } from "@/services/getUser";
 import DividerText from "../DividerText";
 import { useState } from "react";
 import FormLoading from "../FormLoading";
+import { useRouter } from "next/navigation";
 
 //login form
 /*email + password*/
@@ -29,7 +30,6 @@ export default function LoginForm() {
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors },
   } = useForm();
 
@@ -51,11 +51,15 @@ export default function LoginForm() {
   //form errors
   const [formError, setFormError] = useState("");
 
+  //router
+  const router = useRouter();
+
   //submit
   async function onSubmit(formData: FieldValues) {
     try {
       setIsLoading(true);
       const { email, password } = formData;
+
       //server login with data
       await userLogin({ email, password });
 
@@ -64,8 +68,8 @@ export default function LoginForm() {
       setFormError("Login Error!");
       throw new Error(error as string);
     } finally {
-      reset();
-      setIsLoading(false);
+      //navigate to home page
+      router.push("/");
     }
   }
 
