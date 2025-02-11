@@ -42,3 +42,4 @@ next-env.d.ts
 
 #environment variables (API keys)
 .env
+.vercel
