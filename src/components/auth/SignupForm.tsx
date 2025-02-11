@@ -15,12 +15,28 @@ import { FieldValues, useForm } from "react-hook-form";
 import FormInput from "../FormInput";
 import { Alert, Divider, SelectChangeEvent } from "@mui/material";
 import SubmitBtn from "../SubmitBtn";
-import { useLocationSelect } from "@/hooks/useLocationSelect";
 import { useState } from "react";
 import { fullSignup } from "@/utils/types";
 import { userSignup } from "@/services/getUser";
 import FormLoading from "../FormLoading";
 import { useRouter } from "next/navigation";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import {
+  setChurch,
+  setCities,
+  setCity,
+  setClergy,
+  setCountries,
+  setCountry,
+  setRegion,
+  setState,
+  setStates,
+  setSubRegion,
+  setSubRegions,
+  setUsername,
+} from "@/store/slices/editSlice";
+import { getCountries, getSubRegions } from "@/services/getCountries";
+import { getCities, getStates } from "@/services/getCities";
 
 //signup form
 export default function SignupForm() {
@@ -36,7 +52,7 @@ export default function SignupForm() {
       label: "confirm password",
     },
     username: { emoji: <PersonIcon />, label: "username" },
-    age: { emoji: <CalendarMonthIcon />, label: "age" },
+    age: { emoji: <CalendarMonthIcon />, label: "date of birth" },
     gender: { emoji: <WcIcon />, label: "gender" },
     region: { emoji: <PublicIcon />, label: "region" },
     subregion: { emoji: <SouthAmericaIcon />, label: "sub region" },
@@ -57,23 +73,33 @@ export default function SignupForm() {
   //router
   const router = useRouter();
 
+  //edit slice state that will also be used in signup form
+  const {
+    username,
+    region,
+    sub_region,
+    country,
+    state,
+    city,
+    church,
+    subRegions,
+    countries,
+    states,
+    cities,
+    clergy_member,
+  } = useAppSelector((s) => s.location);
+  //dispatch
+  const dispatch = useAppDispatch();
+
   //other select values control
   //gender
   const [gender, setGender] = useState("");
-  //clergy_member
-  const [clergy_member, setclergy_member] = useState("");
   //email
   const [email, setEmail] = useState("");
   //password
   const [password, setPassword] = useState("");
   //password confirm
   const [passwordConfirm, setPasswordConfirm] = useState("");
-  //username
-  const [username, setUsername] = useState("");
-  //age
-  const [age, setAge] = useState("");
-  //church
-  const [church, setChurch] = useState("");
 
   //form control functions for local values [email-church]
   function onEmailChange(e: SelectChangeEvent<string>) {
@@ -89,15 +115,11 @@ export default function SignupForm() {
   }
 
   function onUsernameChange(e: SelectChangeEvent<string>) {
-    setUsername(e.target.value);
-  }
-
-  function onAgeChange(e: SelectChangeEvent<string>) {
-    setAge(e.target.value);
+    dispatch(setUsername(e.target.value));
   }
 
   function onChurchChange(e: SelectChangeEvent<string>) {
-    setChurch(e.target.value);
+    dispatch(setChurch(e.target.value));
   }
 
   //isLoading
@@ -105,20 +127,10 @@ export default function SignupForm() {
   //form errors
   const [formError, setFormError] = useState("");
 
-  //region, country, city selections
-  const {
-    state,
-    updateSubRegions,
-    updateCountries,
-    updateStates,
-    updateCities,
-    controlCity,
-    clear,
-  } = useLocationSelect();
-
   //onSubmit
   async function onSubmit(formData: FieldValues) {
     try {
+      console.log(formData);
       setIsLoading(true);
       //destructure form data
       const { password, passwordConfirmation, ...user } =
@@ -132,7 +144,6 @@ export default function SignupForm() {
       setFormError(error as string);
       throw new Error(error as string);
     } finally {
-      clear();
       //navigate to home page
       router.push("/");
     }
@@ -145,34 +156,88 @@ export default function SignupForm() {
 
   //on clergy change
   function onClergyChange(e: SelectChangeEvent<string>) {
-    setclergy_member(e.target.value);
+    dispatch(setClergy(e.target.value));
   }
 
   //on region change
-  function onRegionChange(e: SelectChangeEvent<string>) {
-    updateSubRegions(e.target.value);
+  async function onRegionChange(e: SelectChangeEvent<string>) {
+    //set current region
+    dispatch(setRegion(e.target.value));
+    //to prevent out of range select values
+    //reset current sub region
+    dispatch(setSubRegion(""));
+    //reset current country
+    dispatch(setCountry(""));
+    //reset current state
+    dispatch(setState(""));
+    //reset current city
+    dispatch(setCity(""));
+    //update sub regions
+    const { subRegions } = await getSubRegions(e.target.value);
+    dispatch(setSubRegions(subRegions));
   }
 
   //on sub region change
-  function onSubRegionChange(e: SelectChangeEvent<string>) {
-    updateCountries(e.target.value);
+  async function onSubRegionChange(e: SelectChangeEvent<string>) {
+    //set current sub region
+    dispatch(setSubRegion(e.target.value));
+    //to prevent out of range select values
+    //reset current country
+    dispatch(setCountry(""));
+    //reset current state
+    dispatch(setState(""));
+    //reset current city
+    dispatch(setCity(""));
+    //update countries
+    const { countries } = await getCountries(e.target.value);
+    const updatedCountries = {
+      countries: countries.map((country) => country.name),
+      countryCodes: Object.fromEntries(
+        countries.map((country) => [country.name, country.code])
+      ),
+    };
+    dispatch(setCountries(updatedCountries));
   }
 
   //on country change
-  function onCountryChange(e: SelectChangeEvent<string>) {
-    updateStates(e.target.value);
+  async function onCountryChange(e: SelectChangeEvent<string>) {
+    dispatch(setCountry(e.target.value));
+    //to prevent out of range select values
+    //reset current state
+    dispatch(setState(""));
+    //reset current city
+    dispatch(setCity(""));
+    //update states
+    const { states } = await getStates(countries.countryCodes[e.target.value]);
+    const updatedStates = {
+      states: states.map((state) => state.name),
+      stateCodes: Object.fromEntries(
+        states.map((state) => [state.name, state.code])
+      ),
+    };
+    dispatch(setStates(updatedStates));
   }
 
   //on state change
-  function onStateChange(e: SelectChangeEvent<string>) {
-    updateCities(e.target.value);
+  async function onStateChange(e: SelectChangeEvent<string>) {
+    dispatch(setState(e.target.value));
+    //to prevent out of range select values
+    //reset current city
+    dispatch(setCity(""));
+    //update cities
+    const { cities } = await getCities(
+      countries.countryCodes[country],
+      states.stateCodes[e.target.value]
+    );
+
+    dispatch(setCities(cities));
   }
 
   //on city change
   //nothing really happens
   //this is just to control the field
   function onCityChange(e: SelectChangeEvent<string>) {
-    controlCity(e.target.value);
+    dispatch(setCity(e.target.value));
   }
 
   if (isLoading) return <FormLoading />;
@@ -228,16 +293,6 @@ export default function SignupForm() {
       />
       <Divider flexItem variant="middle" className="bg-gold dark:bg-white" />
       <FormInput
-        icon={icons.age}
-        fieldName="age"
-        register={register}
-        type="number"
-        error={errors.age}
-        value={age}
-        onChange={onAgeChange}
-      />
-      <Divider flexItem variant="middle" className="bg-gold dark:bg-white" />
-      <FormInput
         icon={icons.gender}
         fieldName="gender"
         register={register}
@@ -255,12 +310,12 @@ export default function SignupForm() {
         register={register}
         isSelect={true}
         type=""
-        value={state.currRegion}
-        options={state.regions}
+        value={region}
+        options={["Africa", "Americas", "Asia", "Europe", "Oceania"]}
         onChange={onRegionChange}
         error={errors.region}
       />
-      {state.subRegions.length ? (
+      {subRegions.length ? (
         <>
           <Divider
             flexItem
@@ -273,16 +328,16 @@ export default function SignupForm() {
             register={register}
             isSelect={true}
             type=""
-            options={state.subRegions}
+            options={subRegions}
             onChange={onSubRegionChange}
-            value={state.currSubRegion}
+            value={sub_region}
             error={errors.sub_region}
           />
         </>
       ) : (
         ""
       )}
-      {state.countries.length ? (
+      {countries.countries.length ? (
         <>
           <Divider
             flexItem
@@ -295,16 +350,16 @@ export default function SignupForm() {
             register={register}
             isSelect={true}
             type=""
-            options={state.countries}
+            options={countries.countries}
             onChange={onCountryChange}
-            value={state.currCountry}
+            value={country}
             error={errors.country}
           />
         </>
       ) : (
         ""
       )}
-      {state.states.length ? (
+      {states.states.length ? (
         <>
           <Divider
             flexItem
@@ -317,8 +372,8 @@ export default function SignupForm() {
             register={register}
             isSelect={true}
             type=""
-            options={state.states}
-            value={state.currState}
+            options={states.states}
+            value={state}
             onChange={onStateChange}
             error={errors.state}
           />
@@ -326,7 +381,7 @@ export default function SignupForm() {
       ) : (
         ""
       )}
-      {state.cities.length ? (
+      {cities.length ? (
         <>
           <Divider
             flexItem
@@ -339,8 +394,8 @@ export default function SignupForm() {
             register={register}
             isSelect={true}
             type=""
-            options={state.cities}
-            value={state.currCity}
+            options={cities}
+            value={city}
             onChange={onCityChange}
             error={errors.city}
           />

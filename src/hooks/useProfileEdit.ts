@@ -1,7 +1,7 @@
 //imports
 import { getCities, getStates } from "@/services/getCities";
 import { getCountries, getSubRegions } from "@/services/getCountries";
-import { useCallback, useMemo, useReducer, useEffect } from "react";
+import { useCallback, useMemo, useReducer } from "react";
 import {
   setChurch,
   setCities,
@@ -69,75 +69,7 @@ export function useProfileEdit({
   //global state
   const { states, countries } = useAppSelector((s) => s.location);
 
-  //init form location options
-  //init form options for locations
-  //send options to global state
   const globalDispatch = useAppDispatch();
-
-  useEffect(() => {
-    const fetchOptions = async () => {
-      //init data on global state
-      globalDispatch(setUsername(initialStateData.username as string));
-      globalDispatch(setRegion(initialStateData.region as string));
-      globalDispatch(setSubRegion(initialStateData.sub_region as string));
-      globalDispatch(setCountry(initialStateData.country as string));
-      globalDispatch(setState(initialStateData.state as string));
-      globalDispatch(setCity(initialStateData.city as string));
-      globalDispatch(setChurch(initialStateData.church as string));
-      globalDispatch(setClergy(initialStateData.clergy_member as string));
-
-      const { subRegions } = await getSubRegions(
-        initialStateData.region as string
-      );
-
-      globalDispatch(setSubRegions(subRegions));
-
-      const { countries } = await getCountries(
-        initialStateData.sub_region as string
-      );
-
-      globalDispatch(
-        setCountries({
-          countries: countries.map((country) => country.name),
-          countryCodes: Object.fromEntries(
-            countries.map((country) => [country.name, country.code])
-          ),
-        })
-      );
-
-      const currentCountryCode = countries.find(
-        (c) => c.name === initialStateData.country
-      )?.code;
-
-      if (currentCountryCode) {
-        const { states } = await getStates(currentCountryCode);
-
-        globalDispatch(
-          setStates({
-            states: states.map((state) => state.name),
-            stateCodes: Object.fromEntries(
-              states.map((state) => [state.name, state.code])
-            ),
-          })
-        );
-
-        const currentStateCode = states.find(
-          (s) => s.name === initialStateData.state
-        )?.code;
-
-        if (currentStateCode) {
-          const { cities } = await getCities(
-            currentCountryCode,
-            currentStateCode
-          );
-
-          globalDispatch(setCities(cities));
-        }
-      }
-    };
-
-    fetchOptions();
-  }, [globalDispatch, initialStateData]);
 
   //control username
   const controlUsername = useCallback(
@@ -180,6 +112,15 @@ export function useProfileEdit({
     async (regionName: string) => {
       //select region
       globalDispatch(setRegion(regionName));
+      //to prevent out of range select values
+      //reset current sub region
+      globalDispatch(setSubRegion(""));
+      //reset current country
+      globalDispatch(setCountry(""));
+      //reset current state
+      globalDispatch(setState(""));
+      //reset current city
+      globalDispatch(setCity(""));
       //get possible sub regions from the api
       const { subRegions } = await getSubRegions(regionName);
       globalDispatch(setSubRegions(subRegions));
@@ -193,6 +134,13 @@ export function useProfileEdit({
       //select sub region
       //update the form field
       globalDispatch(setSubRegion(subRegionName));
+      //to prevent out of range select values
+      //reset current country
+      globalDispatch(setCountry(""));
+      //reset current state
+      globalDispatch(setState(""));
+      //reset current city
+      globalDispatch(setCity(""));
       //get possible countries from the api
       const { countries } = await getCountries(subRegionName);
       globalDispatch(
@@ -212,6 +160,11 @@ export function useProfileEdit({
     async (countryName: string) => {
       //select country
       globalDispatch(setCountry(countryName));
+      //to prevent out of range select values
+      //reset current state
+      globalDispatch(setState(""));
+      //reset current city
+      globalDispatch(setCity(""));
       //get all possible states from the api
       const { states } = await getStates(countries.countryCodes[countryName]);
       //update states
@@ -232,6 +185,9 @@ export function useProfileEdit({
     async (stateName: string) => {
       //select state
       globalDispatch(setState(stateName));
+      //to prevent out of range select values
+      //reset current city
+      globalDispatch(setCity(""));
       //get all cities using the state and country codes
       const { cities } = await getCities(
         countries.countryCodes[initialStateData.country as string],

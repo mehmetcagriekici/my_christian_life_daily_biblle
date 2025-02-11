@@ -1,8 +1,7 @@
 "use client";
 
 //imports
-import { useAppDispatch } from "@/store/hooks";
-import {} from "@/store/slices/authUiSlice";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   closeList,
   openReading,
@@ -12,15 +11,12 @@ import { TReflection } from "@/utils/types";
 import BookIcon from "@mui/icons-material/Book";
 import BtnPage from "../BtnPage";
 
-export default function ReflectionsList({
-  reflections,
-}: {
-  reflections: { [key: string]: TReflection };
-}) {
+export default function ReflectionsList() {
   //click on a reflection, open ReadReflection, close ReflectionForm
   //set current reflection to the ui state
 
   const dispatch = useAppDispatch();
+  const { reflections } = useAppSelector((s) => s.reflection);
 
   function onClick(reflection: TReflection) {
     dispatch(setCurrentReflection(reflection));

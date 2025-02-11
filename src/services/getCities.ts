@@ -1,3 +1,5 @@
+"use server";
+
 //imports
 import axios from "axios";
 //API Stuff
@@ -6,9 +8,9 @@ import axios from "axios";
 export async function getStates(country: string) {
   const config = {
     method: "get",
-    url: `${process.env.NEXT_PUBLIC_CSC_BASE}${country}/states`,
+    url: `https://api.countrystatecity.in/v1/countries/${country}/states`,
     headers: {
-      "X-CSCAPI-KEY": process.env.NEXT_PUBLIC_CSC_KEY,
+      "X-CSCAPI-KEY": process.env.NEXT_CSC_KEY,
     },
   };
 
@@ -27,9 +29,9 @@ export async function getStates(country: string) {
 export async function getCities(countryCode: string, stateCode: string) {
   const config = {
     method: "get",
-    url: `${process.env.NEXT_PUBLIC_CSC_BASE}${countryCode}/states/${stateCode}/cities`,
+    url: `https://api.countrystatecity.in/v1/countries/${countryCode}/states/${stateCode}/cities`,
     headers: {
-      "X-CSCAPI-KEY": process.env.NEXT_PUBLIC_CSC_KEY,
+      "X-CSCAPI-KEY": process.env.NEXT_CSC_KEY,
     },
   };
 

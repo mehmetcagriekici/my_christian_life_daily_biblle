@@ -8,7 +8,24 @@ import Image from "next/image";
 import { JSX, useEffect, useState } from "react";
 import DividerText from "../DividerText";
 import BtnPage from "../BtnPage";
-import { setOpenEdit } from "@/store/slices/editSlice";
+import {
+  setChurch,
+  setCities,
+  setCity,
+  setClergy,
+  setCountries,
+  setCountry,
+  setOpenEdit,
+  setRegion,
+  setState,
+  setStates,
+  setSubRegion,
+  setSubRegions,
+  setUsername,
+} from "@/store/slices/editSlice";
+import { getCountries, getSubRegions } from "@/services/getCountries";
+import { getCities, getStates } from "@/services/getCities";
+import defaultAvatar from "../../../public/default-user.jpg";
 
 export default function UserInfo({
   icons,
@@ -32,15 +49,85 @@ export default function UserInfo({
   } = useAppSelector((s) => s.location);
   const dispatch = useAppDispatch();
 
-  const { gender, age, avatar } = initialStateData;
+  const { gender, avatar } = initialStateData;
+
+  //init global user variables
+  //for user information
+  //and for the form
+  useEffect(() => {
+    const fetchOptions = async () => {
+      //init data on global state
+      dispatch(setUsername(initialStateData.username as string));
+      dispatch(setRegion(initialStateData.region as string));
+      dispatch(setSubRegion(initialStateData.sub_region as string));
+      dispatch(setCountry(initialStateData.country as string));
+      dispatch(setState(initialStateData.state as string));
+      dispatch(setCity(initialStateData.city as string));
+      dispatch(setChurch(initialStateData.church as string));
+      dispatch(setClergy(initialStateData.clergy_member as string));
+
+      const { subRegions } = await getSubRegions(
+        initialStateData.region as string
+      );
+
+      dispatch(setSubRegions(subRegions));
+
+      const { countries } = await getCountries(
+        initialStateData.sub_region as string
+      );
+
+      dispatch(
+        setCountries({
+          countries: countries.map((country) => country.name),
+          countryCodes: Object.fromEntries(
+            countries.map((country) => [country.name, country.code])
+          ),
+        })
+      );
+
+      const currentCountryCode = countries.find(
+        (c) => c.name === initialStateData.country
+      )?.code;
+
+      if (currentCountryCode) {
+        const { states } = await getStates(currentCountryCode);
+
+        dispatch(
+          setStates({
+            states: states.map((state) => state.name),
+            stateCodes: Object.fromEntries(
+              states.map((state) => [state.name, state.code])
+            ),
+          })
+        );
+
+        const currentStateCode = states.find(
+          (s) => s.name === initialStateData.state
+        )?.code;
+
+        if (currentStateCode) {
+          const { cities } = await getCities(
+            currentCountryCode,
+            currentStateCode
+          );
+
+          dispatch(setCities(cities));
+        }
+      }
+    };
+
+    fetchOptions();
+  }, [dispatch, initialStateData]);
 
   //get avatar
   const [url, setUrl] = useState<string | null>(null);
+
   useEffect(() => {
     const getAvatar = async (filePath: string) => {
       //check if user has avatar
       if (avatar) {
         const { signedUrl } = await getSignedUrl(filePath);
+
         if (signedUrl) setUrl(signedUrl);
       }
     };
@@ -80,10 +167,8 @@ export default function UserInfo({
           />
         ) : (
           <Image
-            src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/app_images/default-user.jpg`}
+            src={defaultAvatar}
             alt="default avatar"
-            height={80}
-            width={80}
             className="rounded-full"
           />
         )}
@@ -102,21 +187,6 @@ export default function UserInfo({
         </span>
         <span className="font-serifPrimary text-sky-900 dark:text-sky-300">
           {username}
-        </span>
-      </li>
-      <Divider
-        flexItem
-        variant="middle"
-        className="bg-gray-300 dark:bg-gray-600"
-      />
-      {/*age*/}
-      <li className="w-full flex flex-col justify-center items-center">
-        {icons["age"]}
-        <span className="capitalize font-quotePrimary tracking-widest text-gray-800 dark:text-gray-200">
-          age
-        </span>
-        <span className="font-serifPrimary text-sky-900 dark:text-sky-300">
-          {age}
         </span>
       </li>
       <Divider

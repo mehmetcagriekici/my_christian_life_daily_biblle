@@ -1,7 +1,7 @@
 "use server";
 
 //imports;
-import { createClient } from "@/lib/supabaseServer";
+import { createClient } from "@/lib/supabase";
 import { typeSignupUser } from "@/utils/types";
 import { redirect } from "next/navigation";
 

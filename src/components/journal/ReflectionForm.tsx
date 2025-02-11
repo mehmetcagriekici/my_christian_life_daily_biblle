@@ -7,12 +7,14 @@ import { format } from "date-fns";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import { Alert, Divider, TextField } from "@mui/material";
 import NotesIcon from "@mui/icons-material/Notes";
-import { getDailyBible } from "@/services/getBible";
-import { getSaintOfTheDay } from "@/services/getSaint";
-import { sendReflection } from "@/services/reflectionsClientServices";
-import { TReflection } from "@/utils/types";
+import { sendReflection } from "@/services/getReflections";
+import { TBibleReading, TReflection, TSaint } from "@/utils/types";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { openList, setReflectionText } from "@/store/slices/reflectionSlice";
+import {
+  openList,
+  setReflections,
+  setReflectionText,
+} from "@/store/slices/reflectionSlice";
 import { useState } from "react";
 import BtnPage from "../BtnPage";
 import FormLoading from "../FormLoading";
@@ -20,9 +22,14 @@ import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 
 export default function ReflectionForm({
   id,
+  saints,
+  bibleData,
   reflections,
 }: {
   id: string;
+
+  saints: TSaint[];
+  bibleData: TBibleReading;
   reflections: { [key: string]: TReflection };
 }) {
   //todays reflection
@@ -32,17 +39,6 @@ export default function ReflectionForm({
   //get the current date, used as reflections key
   const today = format(new Date(), "y-MM-dd");
 
-  const reflectionToday = reflections ? reflections[today] : null;
-
-  //current reflection text state to see the saved reflection right away
-  const [localReflectionText, setLocalReflectionText] = useState(
-    reflectionText
-      ? reflectionText
-      : reflectionToday
-      ? reflectionToday.reflection
-      : reflectionText
-  );
-
   //use form
   const { handleSubmit, reset, register } = useForm();
 
@@ -50,15 +46,6 @@ export default function ReflectionForm({
   const [isLoading, setIsLoading] = useState(false);
   //form errors
   const [formError, setFormError] = useState("");
-
-  //reset edit
-  function resetEdit() {
-    if (reflectionToday) {
-      setLocalReflectionText(reflectionToday.reflection);
-      dispatch(setReflectionText(reflectionToday.reflection));
-    }
-    reset();
-  }
 
   //submit and edit
   async function onSubmit(formData: FieldValues) {
@@ -83,12 +70,12 @@ export default function ReflectionForm({
         reflection_saints: [],
       };
 
-      if (reflectionToday) {
+      if (reflections[today]) {
         reflection_data = {
           reflection,
           reflection_date,
-          reflection_readings: reflectionToday.reflection_readings,
-          reflection_saints: reflectionToday.reflection_saints,
+          reflection_readings: reflections[today].reflection_readings,
+          reflection_saints: reflections[today].reflection_saints,
         };
       } else {
         //if there is no reflectionToday
@@ -99,9 +86,7 @@ export default function ReflectionForm({
           dataReading2,
           dataGospel,
           dataPsalms,
-        } = await getDailyBible();
-        //get the saints
-        const { saints } = await getSaintOfTheDay();
+        } = bibleData;
 
         //build the data
         const reflection_readings = {
@@ -123,13 +108,19 @@ export default function ReflectionForm({
       dispatch(setReflectionText(reflection));
       //send it to the server
       await sendReflection({ id, reflection_data });
+      //update reflections
+      dispatch(
+        setReflections({
+          ...reflections,
+          [reflection_data.reflection_date]: reflection_data,
+        })
+      );
     } catch (error) {
       setFormError("Reflection Error!");
       throw new Error(error as string);
     } finally {
       //reset fields
       reset();
-
       setIsLoading(false);
     }
   }
@@ -180,14 +171,6 @@ export default function ReflectionForm({
         />
       </section>
       <Divider flexItem variant="middle" className="bg-gold dark:bg-white" />
-      {/*reset edit*/}
-      {reflectionText ? (
-        <section>
-          <BtnPage onClick={resetEdit}>Reset Edit</BtnPage>
-        </section>
-      ) : (
-        ""
-      )}
 
       {/*reflection text field*/}
       <section className="relative w-full flex flex-col justify-safe-center gap-3 items-safe-center rounded p-1">
@@ -203,9 +186,12 @@ export default function ReflectionForm({
           <TextField
             {...register("reflection", {
               required: true,
-              value: localReflectionText,
+              value: reflectionText
+                ? reflectionText
+                : reflections[today]
+                ? reflections[today].reflection
+                : reflectionText,
               onChange: (e) => {
-                setLocalReflectionText(e.target.value);
                 dispatch(setReflectionText(e.target.value));
               },
             })}

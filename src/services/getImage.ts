@@ -1,9 +1,11 @@
+"use server";
+
 //imports
-import { createClient } from "@/lib/supabaseClient";
+import { createClient } from "@/lib/supabase";
 
 //create a signed url for the user avatar
 export default async function getSignedUrl(filePath: string) {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   //get user
   const {

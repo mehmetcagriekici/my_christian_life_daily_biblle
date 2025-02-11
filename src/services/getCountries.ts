@@ -1,11 +1,13 @@
+"use server";
+
 //get countries
 //data will be use in signup form
 
 //get sub region from the region
 export async function getSubRegions(region: string) {
-  const base = process.env.NEXT_PUBLIC_REST_COUNTRIES;
-
-  const resRegion = await fetch(`${base}region/${region}`);
+  const resRegion = await fetch(
+    `https://restcountries.com/v3.1/region/${region}`
+  );
   if (!resRegion)
     throw new Error("Failed to fetch region from the REST countries API.");
 
@@ -19,9 +21,9 @@ export async function getSubRegions(region: string) {
 
 //get countries in that region
 export async function getCountries(subregion: string) {
-  const base = process.env.NEXT_PUBLIC_REST_COUNTRIES;
-
-  const resSubRegion = await fetch(`${base}subregion/${subregion}`);
+  const resSubRegion = await fetch(
+    `https://restcountries.com/v3.1/subregion/${subregion}`
+  );
   if (!subregion)
     throw new Error("Failed to fetch subregion from the REST countries API.");
 

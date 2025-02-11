@@ -9,11 +9,6 @@ import {
   SelectChangeEvent,
 } from "@mui/material";
 
-//possible props
-//pattern
-//required
-//type
-
 export default function FormInput({
   icon,
   register,

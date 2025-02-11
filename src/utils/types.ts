@@ -4,7 +4,6 @@ import { ChangeEvent, JSX, ReactNode } from "react";
 import {
   UseFormRegister,
   FieldValues,
-  Control,
   FieldError,
   Merge,
   FieldErrorsImpl,
@@ -82,7 +81,6 @@ export type formInputProps = {
   isSelect?: boolean;
   options?: string[];
   type: string;
-  control?: Control;
   value?: string;
   onChange?: (
     e: ChangeEvent<HTMLInputElement> | SelectChangeEvent<string>,

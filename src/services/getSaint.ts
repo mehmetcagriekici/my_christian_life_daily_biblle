@@ -1,24 +1,8 @@
 //imports
-import axios from "axios";
-import { format } from "date-fns";
 import * as cheerio from "cheerio";
 
 //get saint of the day readingfrom evengalizo
-export async function getSaintOfTheDay() {
-  const baseApiKey = process.env.NEXT_PUBLIC_EVANGELIZO_API as string;
-  //date format = year/month/day
-  const currDate = format(new Date(), "yyyMMdd");
-  //final api to get data
-  const key = `${baseApiKey}date=${currDate}&lang=AM&type=saint`;
-
-  //get data (htm/text)
-  const { data } = await axios.get<string>(key, { responseType: "text" });
-
-  if (!data)
-    throw new Error(
-      "Failed getting Saint of the Day Data from Evangelizo API."
-    );
-
+export function orgSaints(data: string) {
   //use cherio to get the text and extract href values
   const saints: { saint: string; link: string }[] = [];
 

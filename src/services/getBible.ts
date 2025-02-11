@@ -1,32 +1,17 @@
-//imports
-import { format } from "date-fns";
-import axios from "axios";
-
 //helper function
 const removeVerticalLines = (str: string) => str.replaceAll("|", "");
 const getHeadingsFromTheReadings = (str: string) =>
   str.split("\n").filter((s) => s);
 
 //get daily bible reading from evengalizo
-export async function getDailyBible() {
-  const baseApiKey = process.env.NEXT_PUBLIC_EVANGELIZO_API as string;
-  //date format = year/month/day
-  const currDate = format(new Date(), "yyyMMdd");
-  //final api to get data
-  const key = `${baseApiKey}date=${currDate}&lang=AM&type=all`;
-
-  //get data (html/text)
-  const { data } = await axios.get<string>(key, { responseType: "text" });
-
-  if (!data) throw new Error("Failed getting Bible Data from Evangelizo API.");
-
+export function orgBible(bibleData: string) {
   //stricted data structure only applies for Evangelizo Reader API
   //replace all html elements with |
   //there are 3 ||| between sections
   //except for the main heading and the rest
   //if gospel, reading_2 exist
   //else reading_2_or_gospel is gospel
-  const [heading_reading_1, psalms, reading_2_or_gospel, gospel] = data
+  const [heading_reading_1, psalms, reading_2_or_gospel, gospel] = bibleData
     .replace(/\<[^>]+>/g, "|")
     .replace(/&[a-z0-9#]+;/gi, "")
     .split("|||");

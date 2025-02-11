@@ -1,8 +1,23 @@
+"use server";
+
 //imports
-import { createClient } from "@/lib/supabaseClient";
+import { createClient } from "@/lib/supabase";
 import { TReflection } from "@/utils/types";
 
-//use only in client components
+//select user reflections
+//use only in server components
+export async function getReflections({ id }: { id: string }) {
+  const supabase = await createClient();
+
+  //reflections will be created after user initiation, might not exist
+  const { data: reflections } = await supabase
+    .from("reflections")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  return { reflections };
+}
 
 //insert reflection
 export async function sendReflection({
@@ -12,7 +27,7 @@ export async function sendReflection({
   id: string;
   reflection_data: TReflection;
 }) {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   //check if the user has already reflections table
   const { data: reflections } = await supabase
