@@ -49,6 +49,8 @@ export default async function HomePage() {
   //convert html to objects using the structure of the API
   const { saints } = orgSaints(saintHtml);
 
+  console.log(saints);
+
   //app
   return (
     <main className="h-dvh w-dvw relative overflow-hidden bg-gray-200 overflow-y-auto flex flex-col justify-safe-center items-safe-center dark:bg-gray-900">

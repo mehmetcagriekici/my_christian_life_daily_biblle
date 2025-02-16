@@ -16,7 +16,7 @@ export function orgSaints(data: string) {
     if (saint && link)
       saints.push({
         saint,
-        link: `${process.env.NEXT_PUBLIC_EVANGELIZO_FEED}${link}`,
+        link: `http://feed.evangelizo.org${link}`,
       });
   });
 
