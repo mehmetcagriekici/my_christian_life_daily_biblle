@@ -188,7 +188,7 @@ export default function ReflectionForm({
               required: true,
               value: reflectionText
                 ? reflectionText
-                : reflections[today]
+                : reflections
                 ? reflections[today].reflection
                 : reflectionText,
               onChange: (e) => {
