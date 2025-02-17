@@ -189,7 +189,7 @@ export default function ReflectionForm({
               value: reflectionText
                 ? reflectionText
                 : reflections
-                ? reflections[today].reflection
+                ? reflections[today]?.reflection
                 : reflectionText,
               onChange: (e) => {
                 dispatch(setReflectionText(e.target.value));
